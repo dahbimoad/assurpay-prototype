@@ -1,0 +1,1182 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>[hidden]{display:none!important}body{margin:0}img{max-width:100%}</style>
+<title>AssurPay Simple</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --cond:"IBM Plex Sans Condensed","IBM Plex Sans","Arial Narrow",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  --bg:#F2F4F1;--surface:#FFFFFF;--surface-2:#F6F8F5;--line:#DCE2DB;--line-2:#C9D2C8;
+  --text:#16201D;--muted:#5A6863;--faint:#8A9893;
+  --accent:#0D6657;--accent-ink:#FFFFFF;--accent-soft:#DDEFEA;
+  --ink:#27449A;
+  --good:#1D7443;--good-soft:#E1F2E6;--warn:#9A5A00;--warn-soft:#FBEED6;--bad:#B0261E;--bad-soft:#FBE4E1;
+  --side:#0C3A33;--side-2:#124A41;--side-text:#D3E8E2;--side-muted:#86ADA4;
+  --portal:#2E3A55;--overlay:rgba(9,20,17,.48);
+  --shadow:0 1px 2px rgba(14,30,26,.06),0 6px 20px rgba(14,30,26,.07);
+  --grid:rgba(13,102,87,.07);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0E1412;--surface:#151D1A;--surface-2:#1A2421;--line:#27332F;--line-2:#34423D;
+  --text:#E5ECE9;--muted:#98A8A2;--faint:#6E7F79;
+  --accent:#3DB39D;--accent-ink:#04211B;--accent-soft:#15352E;--ink:#93AAF2;
+  --good:#5BC98A;--good-soft:#14301F;--warn:#E6A640;--warn-soft:#33270F;--bad:#F07D72;--bad-soft:#3A1916;
+  --side:#0A1916;--side-2:#11261F;--side-text:#CFE3DD;--side-muted:#7A9A92;
+  --portal:#26304A;--overlay:rgba(0,0,0,.6);--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);--grid:rgba(61,179,157,.07);
+  color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#0E1412;--surface:#151D1A;--surface-2:#1A2421;--line:#27332F;--line-2:#34423D;
+  --text:#E5ECE9;--muted:#98A8A2;--faint:#6E7F79;
+  --accent:#3DB39D;--accent-ink:#04211B;--accent-soft:#15352E;--ink:#93AAF2;
+  --good:#5BC98A;--good-soft:#14301F;--warn:#E6A640;--warn-soft:#33270F;--bad:#F07D72;--bad-soft:#3A1916;
+  --side:#0A1916;--side-2:#11261F;--side-text:#CFE3DD;--side-muted:#7A9A92;
+  --portal:#26304A;--overlay:rgba(0,0,0,.6);--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);--grid:rgba(61,179,157,.07);
+  color-scheme:dark;}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font:14px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--cond);margin:0;text-wrap:balance;letter-spacing:-.005em}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mono{font-family:var(--mono);font-size:12.5px;color:var(--ink)}
+.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.muted{color:var(--muted)}.faint{color:var(--faint)}
+.tnum{font-variant-numeric:tabular-nums}
+svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- shell ---------- */
+.app{display:grid;grid-template-columns:244px minmax(0,1fr);min-height:100dvh}
+.side{position:sticky;top:0;height:100dvh;overflow:auto;background:var(--side);color:var(--side-text);display:flex;flex-direction:column;padding:18px 12px 14px;z-index:30}
+.brand{display:flex;align-items:center;gap:10px;padding:0 8px 18px;font:700 19px var(--cond);color:#fff;letter-spacing:.01em}
+.brand svg{width:30px;height:30px}
+.brand small{display:block;font:500 11px var(--sans);color:var(--side-muted);letter-spacing:.02em}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav-sec{font:600 10.5px var(--sans);text-transform:uppercase;letter-spacing:.08em;color:var(--side-muted);padding:14px 10px 6px}
+.nav button{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;padding:8px 10px;border-radius:8px;color:var(--side-text);cursor:pointer;text-align:left;font-weight:500}
+.nav button:hover{background:var(--side-2)}
+.nav button[aria-current="page"]{background:var(--side-2);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
+.nav .count{margin-left:auto;background:#E6A640;color:#2A1B00;font:600 11px var(--sans);border-radius:999px;padding:0 7px;line-height:18px}
+.me{margin-top:auto;padding:12px 8px 0;border-top:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px}
+.me b{display:block;color:#fff;font-weight:600;font-size:13px}.me span{font-size:12px;color:var(--side-muted)}
+.me .icon-btn{margin-left:auto;color:var(--side-text)}
+.av{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font:600 12px var(--sans);color:#fff;flex:none}
+.side-ov{display:none}
+.main-wrap{min-width:0;display:flex;flex-direction:column}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:10px 24px}
+.top h1{font-size:20px;font-weight:600;white-space:nowrap}
+.top .menu-btn{display:none}
+.li a,.kv a{text-decoration:none}.li a:hover,.kv a:hover{text-decoration:underline}
+.demo-tag{font:500 11px var(--sans);color:var(--warn);background:var(--warn-soft);border-radius:999px;padding:2px 8px;white-space:nowrap}
+.gsearch{position:relative;margin-left:auto;width:min(380px,100%)}
+.gsearch input{width:100%;height:36px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--text);padding:0 12px 0 34px;font:14px var(--sans)}
+.gsearch>svg{position:absolute;left:10px;top:9px;color:var(--faint)}
+.gres{position:absolute;right:0;left:0;top:42px;background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);max-height:420px;overflow:auto;padding:6px;z-index:40}
+.gr-item{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;text-align:left;padding:8px;border-radius:7px;cursor:pointer}
+.gr-item:hover,.gr-item:focus-visible{background:var(--surface-2)}
+.gr-item b{font-weight:600}.gr-item .grow{flex:1;min-width:0}
+.gr-empty{padding:12px;color:var(--muted)}
+.icon-btn{border:0;background:none;width:34px;height:34px;border-radius:8px;display:grid;place-items:center;cursor:pointer;color:var(--muted);flex:none;position:relative}
+.icon-btn:hover{background:var(--surface-2);color:var(--text)}
+.bell-wrap{position:relative}
+.bell-dot{position:absolute;top:3px;right:2px;min-width:17px;height:17px;border-radius:999px;background:var(--bad);color:#fff;font:600 10.5px/17px var(--sans);text-align:center;padding:0 4px}
+.bell-pop{position:absolute;right:0;top:42px;width:min(380px,calc(100vw - 32px));background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);z-index:40;overflow:hidden}
+.bell-pop header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--line)}
+.bell-pop header b{font:600 15px var(--cond)}
+.bell-list{max-height:420px;overflow:auto}
+.notif{display:flex;gap:10px;width:100%;border:0;background:none;text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);cursor:pointer}
+.notif:hover{background:var(--surface-2)}
+.notif.unread{background:color-mix(in srgb,var(--accent-soft) 55%,transparent)}
+.notif .dotl{width:8px;height:8px;border-radius:50%;margin-top:7px;flex:none}
+.notif small{display:block;color:var(--faint);font-size:11.5px;margin-top:2px}
+main{padding:22px 24px 48px;display:flex;flex-direction:column;gap:18px;min-width:0}
+
+/* ---------- building blocks ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:34px;padding:0 13px;border-radius:8px;border:1px solid var(--line-2);background:var(--surface);color:var(--text);font:500 13px var(--sans);cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{border-color:var(--faint)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn.danger{color:var(--bad)}
+.btn.ghost{border-color:transparent;background:none}
+.btn.sm{height:28px;padding:0 9px;font-size:12px;border-radius:7px}
+.btn:disabled{opacity:.45;cursor:not-allowed;filter:none}
+.btn svg.i{width:15px;height:15px}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:1px 8px;border-radius:999px;font-size:12px;font-weight:500;white-space:nowrap;line-height:20px}
+.pill svg.i{width:12px;height:12px}
+.pill.good{background:var(--good-soft);color:var(--good)}.pill.warn{background:var(--warn-soft);color:var(--warn)}.pill.bad{background:var(--bad-soft);color:var(--bad)}
+.pill.neutral{background:var(--surface-2);color:var(--muted);box-shadow:inset 0 0 0 1px var(--line)}
+.pill.acc{background:var(--accent-soft);color:var(--accent)}
+.pos{color:var(--good)}.neg{color:var(--bad)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.card-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px 10px;flex-wrap:wrap}
+.card-h h2{font-size:16px;font-weight:600}
+.card-b{padding:0 16px 16px}
+.sec-h{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.sec-h p{margin:4px 0 0;color:var(--muted);max-width:70ch}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px 15px;display:flex;flex-direction:column;gap:2px}
+.kpi .l{font-size:12px;color:var(--muted);font-weight:500}
+.kpi .v{font:600 25px/1.2 var(--cond);font-variant-numeric:tabular-nums}
+.kpi .s{font-size:12px;color:var(--faint)}
+.kpi.hl{background:var(--accent-soft);border-color:transparent}
+.cols{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:18px;align-items:start}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-weight:600;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:9px 12px;border-bottom:1px solid var(--line);background:var(--surface-2);white-space:nowrap}
+td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+tbody tr:last-child td{border-bottom:0}
+tr.row{cursor:pointer}
+tr.row:hover td{background:var(--surface-2)}
+tr.void td{color:var(--faint)}
+tr.void td .nm{text-decoration:line-through}
+tr.dayrow td{background:var(--surface-2);font:600 12px var(--sans);color:var(--muted);text-transform:capitalize;padding-top:7px;padding-bottom:7px}
+tr.totrow td{font-weight:600;border-bottom:2px solid var(--line-2)}
+.nm{font-weight:600}
+.sub{display:block;color:var(--faint);font-size:12px}
+.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field>label,.lbl{font-size:12px;font-weight:500;color:var(--muted)}
+.field small{font-size:11.5px;color:var(--faint)}
+input,select,textarea{height:36px;border:1px solid var(--line-2);border-radius:8px;background:var(--surface);color:var(--text);padding:0 10px;font:14px var(--sans);min-width:0;max-width:100%}
+textarea{height:auto;padding:8px 10px;resize:vertical}
+input[readonly]{background:var(--surface-2);color:var(--muted)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.err{background:var(--bad-soft);color:var(--bad);padding:8px 10px;border-radius:8px;font-size:13px}
+.hint{background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12.5px;color:var(--muted)}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);overflow-x:auto}
+.tabs button{border:0;background:none;padding:8px 12px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--text);border-bottom-color:var(--accent)}
+.bar{height:6px;background:var(--surface-2);border-radius:999px;overflow:hidden;box-shadow:inset 0 0 0 1px var(--line);min-width:70px}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:999px}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+.list{display:flex;flex-direction:column}
+.li{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}
+.li:last-child{border-bottom:0}
+.li .grow{flex:1;min-width:0}
+.li small{display:block;color:var(--faint);font-size:12px}
+.alert{display:flex;gap:10px;align-items:flex-start;padding:9px 11px;border-radius:9px;width:100%;border:0;text-align:left;cursor:pointer;font-size:13px}
+.alert svg.i{margin-top:1px;width:16px;height:16px}
+.alert.bad{background:var(--bad-soft);color:var(--bad)}.alert.warn{background:var(--warn-soft);color:var(--warn)}
+.alert span{color:var(--text)}
+.alerts{display:flex;flex-direction:column;gap:6px}
+input.sw{appearance:none;-webkit-appearance:none;width:38px;height:22px;border-radius:999px;background:var(--line-2);position:relative;cursor:pointer;border:0;padding:0;flex:none;transition:background .15s}
+input.sw::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .15s}
+input.sw:checked{background:var(--accent)}
+input.sw:checked::after{transform:translateX(16px)}
+input.sw:disabled{opacity:.5;cursor:not-allowed}
+
+/* ---------- drawer & modal ---------- */
+.dr-ov{position:fixed;inset:0;background:var(--overlay);z-index:60}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(580px,100%);background:var(--surface);z-index:61;display:flex;flex-direction:column;box-shadow:var(--shadow);padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.dr-head{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;padding:18px 20px 14px;border-bottom:1px solid var(--line)}
+.dr-head h2{font-size:22px;font-weight:600}
+.eyebrow{font:600 11px var(--sans);text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.dr-body{flex:1;overflow:auto;padding:16px 20px;display:flex;flex-direction:column;gap:16px}
+.dr-body h3{font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.dr-foot{border-top:1px solid var(--line);padding:12px 20px;display:flex;flex-wrap:wrap;gap:8px}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px 16px;margin:0}
+.kv div{min-width:0}
+.kv dt{font-size:11.5px;color:var(--faint)}
+.kv dd{margin:0;font-weight:500;overflow-wrap:anywhere}
+.money{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.money div{background:var(--surface);padding:10px 12px}
+.money span{display:block;font-size:11.5px;color:var(--faint)}
+.money b{font:600 18px var(--cond);font-variant-numeric:tabular-nums}
+.papers{display:flex;flex-direction:column;gap:0;border-left:2px solid var(--line);margin-left:6px}
+.paper{position:relative;padding:4px 0 12px 18px}
+.paper::before{content:"";position:absolute;left:-6px;top:9px;width:10px;height:10px;border-radius:50%;background:var(--surface);border:2px solid var(--accent)}
+.paper.def::before{background:var(--accent)}
+.paper.next::before{border-style:dashed;border-color:var(--faint)}
+.paper small{display:block;color:var(--faint);font-size:12px}
+.diff{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-top:2px}
+.overlay{position:fixed;inset:0;background:var(--overlay);display:flex;align-items:center;justify-content:center;padding:16px;z-index:80}
+.modal{background:var(--surface);border-radius:14px;width:min(520px,100%);max-height:calc(100dvh - 32px);overflow:auto;box-shadow:var(--shadow)}
+.m-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 18px 6px}
+.m-head h2{font-size:18px;font-weight:600}
+.m-body{padding:8px 18px 18px;display:flex;flex-direction:column;gap:12px}
+.m-body p{margin:0}
+.m-foot{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;padding-top:4px}
+.modal.ext{width:min(460px,100%)}
+.ext-head{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--side);color:#fff}
+.ext-head b{display:block;font:600 14px var(--sans)}.ext-head span{font-size:11.5px;color:var(--side-muted)}
+.ext-head .icon-btn{margin-left:auto;color:var(--side-text)}
+.ext-head .icon-btn:hover{background:var(--side-2);color:#fff}
+.ext-logo{width:30px;height:30px;border-radius:8px;background:var(--accent);display:grid;place-items:center;color:#fff}
+.ext-ok{display:flex;gap:8px;align-items:center;background:var(--good-soft);color:var(--good);padding:9px 14px;font-weight:500;font-size:13px}
+.capt{display:grid;grid-template-columns:1fr auto;gap:2px 12px;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.capt b{font-weight:600}
+.capt .big{font:600 20px var(--cond);grid-row:span 2;align-self:center;text-align:right}
+.seg{border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
+.seg legend{font-size:12px;font-weight:500;color:var(--muted);padding:0;margin-bottom:6px}
+.seg-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.seg-opts label{position:relative;display:flex;flex-direction:column;gap:1px;border:1px solid var(--line-2);border-radius:9px;padding:8px 10px;cursor:pointer;font-weight:500;font-size:13px}
+.seg-opts label small{font-weight:400;font-size:11px;color:var(--faint)}
+.seg-opts input{position:absolute;opacity:0;pointer-events:none}
+.seg-opts label:has(input:checked){border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}
+.seg-opts label:has(input:disabled){opacity:.45;cursor:not-allowed}
+.seg-opts label:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.ecart-live{height:36px;display:flex;align-items:center;font:600 18px var(--cond);font-variant-numeric:tabular-nums}
+.ecart-live small{font:500 12px var(--sans);margin-left:8px;color:var(--faint)}
+.toasts{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:8px;z-index:100;max-width:calc(100vw - 32px)}
+.toast{background:var(--text);color:var(--bg);padding:10px 14px;border-radius:10px;box-shadow:var(--shadow);font-size:13px;display:flex;gap:8px;align-items:center;width:max-content;max-width:100%;animation:tin .2s ease-out}
+.toast.ext{background:var(--side);color:#fff}
+.toast svg.i{width:16px;height:16px}
+@keyframes tin{from{transform:translateY(8px);opacity:.3}to{transform:none;opacity:1}}
+
+/* ---------- portal ---------- */
+.portal-layout{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:18px;align-items:start}
+.browser{border:1px solid var(--line-2);border-radius:12px;overflow:hidden;background:var(--surface);box-shadow:var(--shadow)}
+.bbar{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface-2);border-bottom:1px solid var(--line)}
+.dots{display:flex;gap:5px}.dots i{width:10px;height:10px;border-radius:50%;background:var(--line-2)}
+.url{flex:1;height:28px;border-radius:999px;background:var(--bg);display:flex;align-items:center;gap:6px;padding:0 12px;font:12px var(--mono);color:var(--muted);min-width:0;overflow:hidden;white-space:nowrap}
+.url span{overflow:hidden;text-overflow:ellipsis}
+.extbtn{position:relative;border:1px solid var(--line);background:var(--surface);height:28px;border-radius:7px;padding:0 8px;display:flex;align-items:center;gap:5px;cursor:pointer;font:600 11.5px var(--sans);color:var(--accent)}
+.extbtn .led{width:7px;height:7px;border-radius:50%;background:var(--good);box-shadow:0 0 0 3px var(--good-soft)}
+.phead{background:var(--portal);color:#fff;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.phead b{font:600 16px var(--cond);letter-spacing:.02em}
+.phead span{font-size:12px;opacity:.75}
+.sim{font:600 10.5px var(--sans);letter-spacing:.08em;text-transform:uppercase;background:rgba(255,255,255,.14);border-radius:4px;padding:3px 7px}
+.pbody{padding:18px;display:flex;flex-direction:column;gap:14px}
+.pbody fieldset{border:1px solid var(--line);border-radius:10px;padding:12px 14px 14px;margin:0;display:flex;flex-direction:column;gap:12px;min-width:0}
+.pbody legend{font:600 12px var(--sans);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;padding:0 6px}
+.prime{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--surface-2);border:1px dashed var(--line-2);border-radius:10px;padding:12px 14px;flex-wrap:wrap}
+.prime b{font:600 26px var(--cond);font-variant-numeric:tabular-nums}
+.done{display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+.stamp{display:inline-flex;align-items:center;gap:8px;color:var(--good);font:600 18px var(--cond)}
+.nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;width:100%}
+.nums div{border:1px solid var(--line);border-radius:9px;padding:9px 11px}
+.nums span{display:block;font-size:11.5px;color:var(--faint)}
+.nums b{font:500 16px var(--mono);color:var(--ink)}
+.chrome-card{border:1px solid var(--line-2);border-radius:10px;padding:14px;display:flex;gap:12px;align-items:flex-start;background:var(--surface-2)}
+.chrome-card .grow{flex:1}
+.chrome-card .org{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--muted);margin-top:4px}
+
+/* ---------- team ---------- */
+.ucards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px}
+.ucard{display:flex;flex-direction:column}
+.ucard>header{display:flex;align-items:center;gap:12px;padding:16px}
+.ucard>header .grow{flex:1;min-width:0}
+.ucard>header b{font:600 17px var(--cond)}
+.extblock{margin:0 16px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;background:var(--surface-2)}
+.extblock .row1{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.minis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px 16px}
+.minis div span{display:block;font-size:11px;color:var(--faint)}
+.minis div b{font:600 15px var(--cond);font-variant-numeric:tabular-nums}
+.perms{padding:4px 16px 16px;display:flex;flex-direction:column}
+.perm{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid var(--line);cursor:pointer}
+.perm b{font-weight:500;font-size:13.5px}.perm small{display:block;color:var(--faint);font-size:12px}
+.perm-sub{display:flex;align-items:center;gap:8px;padding:0 0 9px;font-size:12.5px;color:var(--muted)}
+.perm-sub input{width:80px;height:30px}
+.lockline{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--muted);padding-top:9px;border-top:1px solid var(--line)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line-2);border-radius:999px;padding:3px 4px 3px 10px;font-size:13px}
+.chip button{border:0;background:none;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;cursor:pointer;color:var(--muted)}
+.chip button:hover{background:var(--bad-soft);color:var(--bad)}
+.chip svg.i{width:12px;height:12px}
+.checkrow{display:flex;align-items:center;gap:8px;font-size:13.5px}
+.checkrow input{height:auto}
+
+/* ---------- login ---------- */
+.login{display:grid;grid-template-columns:1.1fr 1fr;min-height:100dvh}
+.login-art{background-color:var(--side);background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);background-size:22px 22px;color:var(--side-text);padding:40px 48px;display:flex;flex-direction:column;gap:22px;justify-content:center}
+.login-art h1{font-size:clamp(28px,4vw,44px);color:#fff;font-weight:600;line-height:1.1;max-width:16ch}
+.login-art p{max-width:46ch;margin:0;color:var(--side-text)}
+.ledger{font:12.5px/1 var(--mono);color:#C9DBFF;border-top:1px solid rgba(255,255,255,.18);max-width:520px}
+.ledger div{display:grid;grid-template-columns:64px 1fr 70px 64px;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.12)}
+.ledger div span:last-child{text-align:right}
+.ledger .h{color:var(--side-muted);font-family:var(--sans);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em}
+.login-form{display:flex;flex-direction:column;justify-content:center;gap:22px;padding:40px clamp(16px,5vw,64px);background:var(--bg)}
+.login-form form{display:flex;flex-direction:column;gap:12px;max-width:380px;width:100%}
+.login-form h2{font-size:26px;font-weight:600}
+.demo-acc{max-width:380px;width:100%;display:flex;flex-direction:column;gap:8px}
+.demo-acc p{margin:0;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.acc{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 11px;cursor:pointer;text-align:left;width:100%}
+.acc:hover{border-color:var(--accent)}
+.acc .grow{flex:1;min-width:0}.acc b{display:block;font-weight:600}.acc small{color:var(--muted);font-size:12px}
+.fine{font-size:12px;color:var(--faint);max-width:380px;margin:0}
+
+@media (max-width:1100px){.cols,.portal-layout{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:900px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .side{position:fixed;left:0;top:0;bottom:0;width:260px;transform:translateX(-100%);transition:transform .2s;height:auto;padding-top:calc(18px + env(safe-area-inset-top,0px))}
+  .app.nav-open .side{transform:none;box-shadow:var(--shadow)}
+  .app.nav-open .side-ov{display:block;position:fixed;inset:0;background:var(--overlay);z-index:25}
+  .top .menu-btn{display:grid}
+  .top{padding:10px 16px;flex-wrap:wrap}
+  .top h1{font-size:18px}
+  .gsearch{order:5;width:100%}
+  main{padding:16px 16px 40px}
+  .login{grid-template-columns:minmax(0,1fr)}
+  .login-art{padding:28px 16px}
+  .ledger{display:none}
+  .minis{grid-template-columns:repeat(2,1fr)}
+  .ucards{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:520px){.seg-opts{grid-template-columns:minmax(0,1fr)}.demo-tag{display:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+</head>
+<body>
+<div id="app"></div>
+<div id="drawer-root"></div>
+<div id="modal-root"></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script>
+(()=>{
+'use strict';
+/* ================= storage ================= */
+const LS='assurpay-simple-v1', SK='assurpay-simple-session';
+const memStore={}; let memSess=null;
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return memStore[k]??null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){memStore[k]=v}}};
+const sess={get(){try{return sessionStorage.getItem(SK)}catch(e){return memSess}},set(v){try{v==null?sessionStorage.removeItem(SK):sessionStorage.setItem(SK,v)}catch(e){memSess=v}}};
+let S=null;
+function load(){try{const raw=store.get(LS);if(raw){const d=JSON.parse(raw);if(d&&d.ver===1){S=d;return}}}catch(e){}S=seed();save()}
+function save(){store.set(LS,JSON.stringify(S))}
+
+/* ================= utils ================= */
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nf=new Intl.NumberFormat('fr-FR');
+const dh=n=>nf.format(Math.round(n||0))+' DH';
+const sdh=n=>{n=Math.round(n||0);return n===0?'0 DH':(n>0?'+':'−')+nf.format(Math.abs(n))+' DH'};
+const ecCls=n=>n<0?'neg':n>0?'pos':'';
+const d2=n=>String(n).padStart(2,'0');
+const dayKey=iso=>{const d=new Date(iso);return d.getFullYear()+'-'+d2(d.getMonth()+1)+'-'+d2(d.getDate())};
+const todayKey=()=>dayKey(new Date().toISOString());
+const monthKey=iso=>dayKey(iso).slice(0,7);
+const fdate=iso=>{const d=new Date(iso);return d2(d.getDate())+'/'+d2(d.getMonth()+1)+'/'+d.getFullYear()};
+const fshort=iso=>{const d=new Date(iso);return d2(d.getDate())+'/'+d2(d.getMonth()+1)};
+const ftime=iso=>{const d=new Date(iso);return d2(d.getHours())+':'+d2(d.getMinutes())};
+const MOIS=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+const JOURS=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+const longDay=k=>{const d=new Date(k+'T12:00');return JOURS[d.getDay()]+' '+d.getDate()+' '+MOIS[d.getMonth()]+' '+d.getFullYear()};
+const monthLabel=mk=>{const [y,m]=mk.split('-');return MOIS[+m-1]+' '+y};
+const addDays=(iso,n)=>{const d=new Date(iso);d.setDate(d.getDate()+n);return d.toISOString()};
+const addMonths=(iso,n)=>{const d=new Date(iso);d.setMonth(d.getMonth()+n);d.setDate(d.getDate()-1);return d.toISOString()};
+const daysUntil=iso=>Math.round((new Date(dayKey(iso)+'T12:00')-new Date(todayKey()+'T12:00'))/864e5);
+function fmtMin(m){m=Math.max(0,m);if(m<60)return Math.round(m)+' min';const h=Math.floor(m/60);if(h<24)return h+' h'+(m%60>=5&&h<3?' '+d2(Math.round(m%60)):'');return Math.floor(h/24)+' j'}
+function ago(iso){const m=(Date.now()-new Date(iso))/6e4;if(m<1)return "à l'instant";if(m<60)return 'il y a '+Math.floor(m)+' min';if(m<1440)return 'il y a '+Math.floor(m/60)+' h';const d=Math.floor(m/1440);return d===1?'hier, '+ftime(iso):'le '+fdate(iso)}
+const uid=p=>p+Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-4);
+const sum=a=>a.reduce((x,y)=>x+(+y||0),0);
+const norm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/\p{M}/gu,'').replace(/\s+/g,' ').trim();
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const LETTERS='ABCDEFGHJKLMNPRSTUVWXYZ';
+const BASE={Tourisme:284,Divers:102,'Commerce C1':417,Cyclo:140};
+const primeOf=(cat,months,v=0)=>{const f={1:1,3:.98,6:.95,12:.93}[months]||1;return Math.round((BASE[cat]||200)*months*f)+3+v};
+const MODES=['espèces','chèque','virement'];
+const modeKey=m=>({'espèces':'esp','chèque':'chq','virement':'vir'})[m]||'esp';
+const COLORS=['#0D6657','#8A4B9E','#C0582B','#2F5DA8','#6B7F1E','#A0364E'];
+
+/* ================= icons ================= */
+const IC={
+dash:'<rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/>',
+book:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M9 7h7M9 11h5"/>',
+wallet:'<path d="M20 12V8H6a2 2 0 0 1 0-4h12v4"/><path d="M4 6v12a2 2 0 0 0 2 2h14v-4"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/>',
+users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+cash:'<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/>',
+scale:'<path d="M16 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1z"/><path d="M2 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1z"/><path d="M7 21h10M12 3v18M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>',
+building:'<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M16 6h.01M12 6h.01M12 10h.01M12 14h.01M16 10h.01M16 14h.01M8 10h.01M8 14h.01"/>',
+activity:'<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+sliders:'<path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/>',
+globe:'<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>',
+bell:'<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>',
+search:'<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/>',
+logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/>',
+menu:'<path d="M3 12h18M3 6h18M3 18h18"/>',
+x:'<path d="M18 6L6 18M6 6l12 12"/>',
+plus:'<path d="M12 5v14M5 12h14"/>',
+msg:'<path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5z"/>',
+check:'<path d="M20 6L9 17l-5-5"/>',
+alert:'<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/>',
+lock:'<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+puzzle:'<path d="M19.44 7.85c-.05.32.06.65.29.88l1.57 1.57c.47.47.7 1.09.7 1.7s-.23 1.23-.7 1.7l-1.61 1.61a.98.98 0 0 1-.84.28c-.47-.07-.8-.48-.97-.93a2.5 2.5 0 1 0-3.21 3.21c.45.17.86.5.93.97a.98.98 0 0 1-.28.84l-1.61 1.61a2.4 2.4 0 0 1-1.7.7 2.4 2.4 0 0 1-1.7-.7l-1.57-1.57a1.03 1.03 0 0 0-.88-.29c-.49.07-.84.5-1.02.97a2.5 2.5 0 1 1-3.24-3.24c.46-.18.9-.53.97-1.02a1.03 1.03 0 0 0-.29-.88L2.7 13.7A2.4 2.4 0 0 1 2 12c0-.62.24-1.23.7-1.7l1.53-1.53c.24-.24.58-.35.92-.3.51.08.88.53 1.07 1.01a2.5 2.5 0 1 0 3.26-3.26c-.48-.2-.93-.56-1.01-1.07-.05-.34.06-.68.3-.92L10.3 2.7A2.4 2.4 0 0 1 12 2c.62 0 1.23.24 1.7.7l1.57 1.57c.23.23.56.34.88.29.49-.07.84-.5 1.02-.97a2.5 2.5 0 1 1 3.24 3.24c-.46.18-.9.53-.97 1.02z"/>',
+file:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h4"/>',
+flag:'<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22v-7"/>',
+edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+copy:'<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+clock:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+arrow:'<path d="M5 12h14M12 5l7 7-7 7"/>'
+};
+const ic=(n,s)=>`<svg class="i" viewBox="0 0 24 24" aria-hidden="true"${s?` style="width:${s}px;height:${s}px"`:''}>${IC[n]||''}</svg>`;
+const LOGO=`<svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#3DB39D"/><path d="M9 10.5h14M9 15.5h9M9 20.5h5" stroke="#06231D" stroke-width="2.3" stroke-linecap="round"/><path d="M17.5 21l2.7 2.7L25.5 18" stroke="#06231D" stroke-width="2.3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+/* ================= seed ================= */
+function seed(){
+  const rnd=mulberry32(20260928), pick=a=>a[Math.floor(rnd()*a.length)];
+  const now=Date.now();
+  const dayAt=(off,h,m)=>{const d=new Date();d.setDate(d.getDate()+off);d.setHours(h,m,0,0);return d.toISOString()};
+  const minsAgo=m=>new Date(now-m*6e4).toISOString();
+  const addMin=(iso,m)=>new Date(new Date(iso).getTime()+m*6e4).toISOString();
+  const allOn={voirTout:true,credit:true,ecart:true,paiements:true,definitif:true,rappels:false,clients:false,stats:false,assureur:false};
+  const users=[
+    {id:'u1',name:'Said Agouram',role:'admin',login:'admin',pwd:'admin123',active:true,color:COLORS[0],ext:{poste:'PC-DIRECTION',lastSeen:minsAgo(1)}},
+    {id:'u2',name:'Collaboratrice',role:'collab',login:'collab',pwd:'collab123',active:true,color:COLORS[1],maxEcart:null,perms:{...allOn},ext:{poste:'PC-ACCUEIL',lastSeen:minsAgo(2)}}
+  ];
+  const CL=[
+    ['EL AMRANI','Driss','BE812345','0661234512','48213-A-6','Dacia Logan'],
+    ['CHRAIBI','Nabil','BK203918','0662417730','30918-B-1','Renault Kangoo'],
+    ['LAHLOU','Mehdi','BJ451203','0677890144','11874-D-6','Peugeot 208'],
+    ['HAJJI','Saïd','BH098812','0654332190','—','Scooter Kymco'],
+    ['NACIRI','Laïla','BE554021','0668104522','52740-A-6','Hyundai i10'],
+    ['BENJELLOUN','Karim','BK771230','0661902345','27315-B-6','Dacia Sandero'],
+    ['OUAZZANI','Hind','BJ330219','0670114587','60412-A-1','Kia Picanto'],
+    ['TAHIRI','Omar','BH672104','0663558210','39021-H-6','Toyota Yaris'],
+    ['FASSI','Rachid','BE118734','0652447019','14567-D-1','Fiat Doblo'],
+    ['BERRADA','Souad','BK908413','0679332841','72210-A-6','Citroën C3'],
+    ['IDRISSI','Hamza','BJ220471','0661785520','—','Moto Docker'],
+    ['ZIANI','Abdelilah','BH553108','0668221094','8812-B-6','Isuzu D-Max'],
+    ['SQALLI','Adil','BE730256','0671149963','44308-A-6','VW Polo'],
+    ['BOUZIDI','Mustapha','BK115790','0655870341','19934-D-6','Mercedes Sprinter'],
+    ['RAMI','Othmane','BJ884302','0662014478','35561-A-1','Dacia Duster'],
+    ['AIT BENALI','Brahim','BH401127','0677563320','26870-B-6','Renault Clio'],
+    ['MANSOURI','Fatima Zahra','BE627713','0661350982','58103-A-6','Peugeot 301'],
+    ['CHERKAOUI','Anas','BK349058','0670826614','—','Scooter Peugeot'],
+    ['ALAMI','Reda','BJ710364','0663941207','47715-D-6','Skoda Octavia'],
+    ['BAKKALI','Noureddine','BH285540','0654106738','9043-A-1','Ford Transit'],
+    ['SENHAJI','Aziz','BE413985','0668572016','61288-B-6','Dacia Logan'],
+    ['TOUIL','Hassan','BK560214','0679218845','33406-A-6','Opel Corsa']
+  ];
+  const clients=CL.map((c,i)=>({id:'c'+(i+1),nom:c[0],prenom:c[1],cin:c[2],tel:c[3],immat:c[4],vehicule:c[5]}));
+  const st={ver:1,settings:{agence:'Agence Agouram Assurances',ville:'Casablanca',assureur:'AXA Assurance Maroc',telAdmin:'0661 00 42 17',categories:['Tourisme','Divers','Commerce C1','Cyclo'],dureeProvisoire:30,delaiComplement:2,notif:{app:true,whatsapp:false,email:false},notifMode:'chaque'},users,clients,contracts:[],payments:[],notifs:[],audit:[],closes:[],versements:[],counters:{att:20371725,pol:100404}};
+  const U=id=>users.find(u=>u.id===id), C=id=>clients.find(c=>c.id===id);
+  const nameOf=c=>{const x=C(c.clientId);return x.nom+' '+x.prenom};
+  const quit=()=>String(Math.floor(rnd()*9000)+1000)+LETTERS[Math.floor(rnd()*23)]+LETTERS[Math.floor(rnd()*23)];
+  const A=(date,userId,type,text,x={})=>st.audit.push({id:uid('a'),date,userId,type,text,...x});
+  function add(o){
+    const c={id:uid('k'),createdAt:o.at,clientId:o.cl,categorie:o.cat,duree:o.m,debut:o.at,fin:addMonths(o.at,o.m),attestation:String(st.counters.att++),police:String(st.counters.pol++),quittance:quit(),du:o.du,pris:o.pris??o.du,collabId:o.by,poste:U(o.by).ext.poste,status:o.status||'complet',type:o.type||'comptant',papiers:[],observation:o.obs||'',source:'capture'};
+    st.contracts.push(c);
+    A(c.createdAt,o.by,'validation',`Validation sur le portail · ${nameOf(c)} · ${c.categorie} · police ${c.police} · ${dh(c.du)}`,{contractId:c.id});
+    if(c.status==='complet'){
+      const ec=c.pris-c.du;
+      A(addMin(c.createdAt,2),o.by,'complement',`Encaissement complété · ${nameOf(c)} · ${typeLabel(c.type)} · pris ${dh(c.pris)}${ec?` (écart ${sdh(ec)})`:''}`,{contractId:c.id});
+      if(c.type!=='provisoire')c.papiers.push({id:uid('pp'),type:'definitif',debut:c.debut,fin:c.fin,remisLe:c.createdAt,remisPar:o.by});
+    }
+    return c;
+  }
+  function pay(c,date,montant,mode,by){st.payments.push({id:uid('p'),contractId:c.id,date,montant,mode,userId:by});A(date,by,'paiement',`Paiement de ${dh(montant)} · ${nameOf(c)} · police ${c.police}`,{contractId:c.id})}
+  function paper(c,type,debut,jours,by){const p={id:uid('pp'),type,debut,fin:type==='definitif'?c.fin:addDays(debut,jours-1),remisLe:debut,remisPar:by};c.papiers.push(p);A(addMin(debut,1),by,type==='definitif'?'definitif':'papier',type==='definitif'?`Papier définitif remis · ${nameOf(c)}`:`Papier provisoire remis · ${nameOf(c)} · jusqu'au ${fdate(p.fin)}`,{contractId:c.id})}
+  const regular=clients.slice(5).map(c=>c.id);
+  const modePick=()=>'espèces';
+  for(let off=-45;off<=-1;off++){
+    const d=new Date();d.setDate(d.getDate()+off);if(d.getDay()===0)continue;
+    const n=pick([1,2,2,3,3,4]);
+    for(let i=0;i<n;i++){
+      const by='u2', max=10;
+      const cat=pick(['Tourisme','Tourisme','Tourisme','Divers','Commerce C1','Cyclo']), m=pick([1,3,3,3,6,12]);
+      const du=primeOf(cat,m,Math.floor(rnd()*9)-4);
+      let pris=du;const r=rnd();
+      if(r>.6&&r<.86){const p=Math.floor(du/10)*10;if(du-p<=max)pris=p}
+      else if(r>=.86){const p=Math.ceil((du+1)/5)*5;if(p-du<=max)pris=p}
+      const c=add({at:dayAt(off,9+Math.floor(rnd()*9),Math.floor(rnd()*60)),cl:pick(regular),cat,m,du,pris,by});
+      pay(c,addMin(c.createdAt,2),pris,modePick(),by);
+    }
+  }
+  // Driss: 4000 DH year, paid in steps, provisional papers
+  let c=add({at:dayAt(-56,10,20),cl:'c1',cat:'Tourisme',m:12,du:4003,pris:4000,by:'u2',type:'provisoire',obs:"Année en 3 papiers : 2 provisoires d'un mois puis le définitif."});
+  paper(c,'provisoire',c.createdAt,30,'u2');pay(c,addMin(c.createdAt,3),1000,'espèces','u2');
+  pay(c,dayAt(-49,16,5),500,'espèces','u2');
+  paper(c,'provisoire',dayAt(-26,11,0),30,'u2');pay(c,dayAt(-26,11,4),1200,'espèces','u2');
+  pay(c,dayAt(-15,17,40),700,'espèces','u2');
+  // Nabil: normal credit
+  c=add({at:dayAt(-12,12,15),cl:'c2',cat:'Commerce C1',m:12,du:1253,pris:1250,by:'u2',type:'normal',obs:'Passera régler le reste début du mois.'});
+  pay(c,addMin(c.createdAt,3),800,'chèque','u2');
+  // Mehdi: provisional, reste 380
+  c=add({at:dayAt(-20,10,5),cl:'c3',cat:'Tourisme',m:3,du:830,pris:830,by:'u2',type:'provisoire',obs:'Provisoire, le reste 380 DH.'});
+  paper(c,'provisoire',c.createdAt,30,'u2');pay(c,addMin(c.createdAt,3),450,'espèces','u2');
+  // Saïd: provisional paper expired
+  c=add({at:dayAt(-40,15,30),cl:'c4',cat:'Cyclo',m:6,du:842,pris:840,by:'u2',type:'provisoire'});
+  paper(c,'provisoire',c.createdAt,30,'u2');pay(c,addMin(c.createdAt,3),300,'espèces','u2');
+  // Laïla: normal credit fully paid
+  c=add({at:dayAt(-35,9,50),cl:'c5',cat:'Divers',m:12,du:1105,pris:1100,by:'u2',type:'normal'});
+  pay(c,addMin(c.createdAt,3),600,'espèces','u2');pay(c,dayAt(-5,11,20),500,'virement','u2');
+  // today
+  c=add({at:minsAgo(205),cl:'c6',cat:'Tourisme',m:3,du:853,pris:850,by:'u2'});pay(c,addMin(c.createdAt,2),850,'espèces','u2');
+  c=add({at:minsAgo(95),cl:'c7',cat:'Divers',m:1,du:105,pris:105,by:'u2'});pay(c,addMin(c.createdAt,2),105,'chèque','u2');
+  c=add({at:minsAgo(38),cl:'c9',cat:'Commerce C1',m:3,du:1229,pris:1230,by:'u2'});pay(c,addMin(c.createdAt,2),1230,'espèces','u2');
+  add({at:minsAgo(150),cl:'c15',cat:'Cyclo',m:3,du:415,by:'u2',status:'a_completer'});
+  // cash closes
+  const tk=todayKey(), groups={};
+  st.payments.forEach(p=>{const k=dayKey(p.date);if(k>=tk)return;const g=groups[k+'|'+p.userId]||(groups[k+'|'+p.userId]={day:k,userId:p.userId,esp:0,chq:0,vir:0});g[modeKey(p.mode)]+=p.montant});
+  const days=[...new Set(Object.values(groups).map(g=>g.day))].sort(), lastDay=days[days.length-1];
+  let gapDone=false;
+  Object.values(groups).sort((a,b)=>a.day.localeCompare(b.day)).forEach(g=>{
+    if(g.day===lastDay&&g.userId==='u2')return;
+    let ce=g.esp,note='';
+    if(g.userId==='u2'&&!gapDone&&g.esp>=300&&g.day>=days[days.length-8]){ce=g.esp-50;note='Erreur de rendu de monnaie à un client.';gapDone=true}
+    const at=new Date(g.day+'T19:05').toISOString();
+    st.closes.push({id:uid('cl'),day:g.day,userId:g.userId,attEsp:g.esp,attChq:g.chq,attVir:g.vir,compteEsp:ce,compteChq:g.chq,ecart:ce-g.esp,note,closedAt:at});
+    A(at,g.userId,'cloture',`Caisse du ${fdate(at)} clôturée · espèces comptées ${dh(ce)}${ce-g.esp?` · écart ${sdh(ce-g.esp)}`:''}`);
+  });
+  // insurer transfers (weekly, up to 2 weeks ago)
+  const limit=addDays(new Date().toISOString(),-14), weeks={};
+  st.contracts.forEach(k=>{if(k.createdAt>=limit)return;const d=new Date(k.createdAt);d.setDate(d.getDate()-((d.getDay()+6)%7));d.setHours(11,0,0,0);const wk=d.toISOString();weeks[wk]=(weeks[wk]||0)+k.du});
+  Object.keys(weeks).sort().forEach(wk=>{const date=addDays(wk,7);if(new Date(date)>new Date())return;st.versements.push({id:uid('v'),date,montant:weeks[wk],ref:'VIR-'+dayKey(date).replace(/-/g,''),mode:'virement'});A(date,'u1','versement',`Versement à l'assureur · ${dh(weeks[wk])}`)});
+  st.axaPaid={};
+  [...new Set(st.contracts.map(k=>monthKey(k.createdAt)))].filter(m=>m<tk.slice(0,7)).forEach(m=>{const [y,mo]=m.split('-').map(Number);const d=new Date(y,mo,5,11,0).toISOString();st.axaPaid[m]=d;A(d,'u1','versement',`${monthLabel(m)} payé à l'assureur`)});
+  // notifications
+  const startToday=new Date(tk+'T00:00').getTime();
+  st.contracts.filter(k=>now-new Date(k.createdAt)<48*36e5).forEach(k=>{st.notifs.push({id:uid('n'),date:k.createdAt,level:'info',type:'validation',text:`${U(k.collabId).name} a validé une assurance · ${k.categorie} · ${nameOf(k)} · police ${k.police} · ${dh(k.du)}`,contractId:k.id,read:new Date(k.createdAt).getTime()<startToday})});
+  [['u2',minsAgo(215)],['u1',minsAgo(60)]].forEach(([u,d])=>A(d,u,'connexion',`Connexion · ${U(u).ext.poste}`));
+  return st;
+}
+
+/* ================= model helpers ================= */
+const ME=()=>S&&S.users.find(u=>u.id===sess.get()&&u.active);
+const isAdmin=()=>ME()?.role==='admin';
+const OFF=['rappels','assureur'];
+const can=p=>{if(OFF.includes(p))return false;const u=ME();return !!u&&(u.role==='admin'||!!(u.perms&&u.perms[p]))};
+const K=id=>S.contracts.find(c=>c.id===id);
+const clientOf=id=>S.clients.find(c=>c.id===id)||{nom:'?',prenom:'',tel:'',cin:'',immat:''};
+const userOf=id=>S.users.find(u=>u.id===id)||{name:'—',color:'#888',ext:{}};
+const fullName=cl=>cl.nom+' '+cl.prenom;
+const initials=n=>n.split(' ').map(x=>x[0]).slice(0,2).join('').toUpperCase();
+const paysOf=c=>S.payments.filter(p=>p.contractId===c.id).sort((a,b)=>a.date.localeCompare(b.date));
+const paidOf=c=>sum(paysOf(c).map(p=>p.montant));
+const resteOf=c=>c.status==='complet'&&c.type!=='comptant'?Math.max(0,c.pris-paidOf(c)):0;
+const ecartOf=c=>c.status==='complet'?c.pris-c.du:0;
+const lastPaper=c=>c.papiers[c.papiers.length-1];
+const typeLabel=t=>({comptant:'Comptant',normal:'Crédit normal',provisoire:'Crédit provisoire'})[t]||t;
+const scopeContracts=()=>isAdmin()||can('voirTout')?S.contracts:S.contracts.filter(c=>c.collabId===ME().id);
+const scopePayments=()=>isAdmin()||can('voirTout')?S.payments:S.payments.filter(p=>p.userId===ME().id);
+const collabs=()=>S.users.filter(u=>u.role==='collab');
+function audit(type,text,x={}){S.audit.push({id:uid('a'),date:new Date().toISOString(),userId:ME()?.id,type,text,...x})}
+function notify(level,type,text,contractId){if(isAdmin())return;S.notifs.push({id:uid('n'),date:new Date().toISOString(),level,type,text,contractId,read:false})}
+function matchContract(c,q){const cl=clientOf(c.clientId);return [c.police,c.attestation,c.quittance,cl.nom,cl.prenom,cl.prenom+' '+cl.nom,cl.nom+' '+cl.prenom,cl.cin,cl.tel,cl.immat].some(v=>norm(v).includes(q))}
+function paperState(c){
+  if(c.status!=='complet'||c.type==='comptant')return null;
+  const p=lastPaper(c);if(!p)return null;
+  if(p.type==='definitif')return{lvl:'good',text:'Définitif remis'};
+  const d=daysUntil(p.fin);
+  if(d<0)return{lvl:'bad',text:`Provisoire expiré depuis ${-d} j`,d};
+  if(d<=5)return{lvl:'warn',text:d===0?"Provisoire expire aujourd'hui":`Provisoire · expire dans ${d} j`,d};
+  return{lvl:'neutral',text:`Provisoire jusqu'au ${fshort(p.fin)}`,d};
+}
+function payPill(c){
+  if(c.status==='annule')return '<span class="pill neutral">Annulé</span>';
+  if(c.status==='a_completer')return `<span class="pill warn">${ic('clock')}À compléter</span>`;
+  if(c.type==='comptant')return '<span class="pill neutral">Comptant</span>';
+  const r=resteOf(c);
+  if(r<=0)return `<span class="pill good">${ic('check')}Soldé</span>`;
+  const ps=paperState(c);
+  return `<span class="pill ${ps&&ps.lvl==='bad'?'bad':'warn'}">${c.type==='provisoire'?'Provisoire':'Crédit'} · reste ${dh(r)}</span>`;
+}
+function paidPill(c){
+  if(c.status==='annule')return '<span class="pill neutral">Annulé</span>';
+  if(c.status==='a_completer')return '<span class="pill warn">Encaissement non saisi</span>';
+  const r=resteOf(c);return r>0?`<span class="pill bad">Reste ${dh(r)}</span>`:`<span class="pill good">${ic('check')}Payé</span>`;
+}
+function alerts(){
+  const out=[],st=S.settings,now=Date.now();
+  S.contracts.forEach(c=>{
+    const nm=fullName(clientOf(c.clientId));
+    if(c.status==='a_completer'){const h=(now-new Date(c.createdAt))/36e5;if(h>=st.delaiComplement)out.push({lvl:'bad',text:`Validée sans encaissement depuis ${fmtMin(h*60)} · ${nm} · police ${c.police} (${userOf(c.collabId).name})`,a:'open-contract',id:c.id})}
+    if(c.status==='complet'&&c.type==='provisoire'&&resteOf(c)>0){const ps=paperState(c);if(ps&&ps.d!==undefined){if(ps.d<0)out.push({lvl:'bad',text:`Papier provisoire expiré depuis ${-ps.d} j · ${nm} · reste ${dh(resteOf(c))}`,a:'open-contract',id:c.id});else if(ps.d<=5)out.push({lvl:'warn',text:`${ps.text} · ${nm} · reste ${dh(resteOf(c))}`,a:'open-contract',id:c.id})}}
+  });
+  const pk=todayKey().slice(0,7),pa=S.axaPaid||{};[...new Set(S.contracts.filter(c=>c.status!=='annule').map(c=>monthKey(c.createdAt)))].filter(m=>m<pk&&!pa[m]).forEach(m=>out.push({lvl:'warn',text:`${monthLabel(m)} pas encore payé à AXA · ${dh(sum(S.contracts.filter(c=>c.status!=='annule'&&monthKey(c.createdAt)===m).map(c=>c.du)))}`,a:'nav',id:'axa'}));
+  return out.sort((a,b)=>(a.lvl==='bad'?0:1)-(b.lvl==='bad'?0:1));
+}
+function expected(day,userId){const ps=S.payments.filter(p=>p.userId===userId&&dayKey(p.date)===day);const r={esp:0,chq:0,vir:0,n:ps.length,list:ps};ps.forEach(p=>r[modeKey(p.mode)]+=p.montant);return r}
+
+/* ================= state ================= */
+let route='dashboard',DR=null,bellOpen=false,portal={step:'form',lastId:null};
+const F={reg:{from:'',to:'',collab:'',cat:'',type:'',q:''},cred:{tab:'encours',q:''},cli:{q:''},caisse:{day:''},ec:{month:''},act:{user:'',type:''}};
+const ROUTES={
+  dashboard:{t:'Tableau de bord',i:'dash',ok:()=>can('stats')},
+  portal:{t:'Portail assureur',i:'globe',ok:()=>true},
+  registre:{t:'Registre',i:'book',ok:()=>true},
+  credits:{t:'Crédits',i:'wallet',ok:()=>can('paiements')||can('credit')},
+  clients:{t:'Clients',i:'users',ok:()=>true},
+  axa:{t:'À payer à AXA',i:'building',ok:()=>isAdmin()},
+  activite:{t:'Activité',i:'activity',ok:()=>isAdmin()}
+};
+const routeTitle=r=>!isAdmin()&&r==='registre'&&!can('voirTout')?'Mes saisies':!isAdmin()&&r==='caisse'?'Ma caisse':ROUTES[r].t;
+function navOrder(){return isAdmin()?[['dashboard','registre','credits','clients','axa','activite'],['portal']]:[['portal','registre','credits','clients']]}
+
+/* ================= render ================= */
+function render(){
+  const root=$('#app');
+  if(!ME()){root.innerHTML=loginView();$('#drawer-root').innerHTML='';return}
+  const allowed=navOrder().flat().filter(r=>ROUTES[r].ok());
+  if(!allowed.includes(route))route=allowed[0];
+  root.innerHTML=shell();
+  renderMain();
+}
+function renderMain(){
+  const m=$('#main');if(!m)return;
+  const ae=document.activeElement,fid=ae&&m.contains(ae)?ae.id:null;let ss=null,se=null;
+  try{ss=ae.selectionStart;se=ae.selectionEnd}catch(e){}
+  m.innerHTML=PAGES[route]();
+  if(fid){const el=document.getElementById(fid);if(el){el.focus();try{if(ss!=null)el.setSelectionRange(ss,se)}catch(e){}}}
+  updateBell();
+}
+function shell(){
+  const u=ME(),secs=navOrder(),al=isAdmin()?alerts().length:0;
+  const secLabels=isAdmin()?['Agence','Démo']:[''];
+  const nav=secs.map((sec,i)=>`${secLabels[i]?`<div class="nav-sec">${secLabels[i]}</div>`:''}${sec.filter(r=>ROUTES[r].ok()).map(r=>`<button data-a="nav" data-id="${r}" ${r===route?'aria-current="page"':''}>${ic(ROUTES[r].i)}${esc(routeTitle(r))}${r==='dashboard'&&al?`<span class="count">${al}</span>`:''}</button>`).join('')}`).join('');
+  return `<div class="app" id="shell">
+  <div class="side-ov" data-a="nav-close"></div>
+  <aside class="side" aria-label="Navigation">
+    <div class="brand">${LOGO}<div>AssurPay<small>${esc(S.settings.agence)}</small></div></div>
+    <nav class="nav">${nav}</nav>
+    <div class="me"><div class="av" style="background:${u.color}">${initials(u.name)}</div><div><b>${esc(u.name)}</b><span>${u.role==='admin'?'Administrateur':'Collaboratrice'} · ${esc(u.ext.poste)}</span></div><button class="icon-btn" data-a="logout" title="Se déconnecter" aria-label="Se déconnecter">${ic('logout')}</button></div>
+  </aside>
+  <div class="main-wrap">
+    <header class="top">
+      <button class="icon-btn menu-btn" data-a="nav-open" aria-label="Menu">${ic('menu')}</button>
+      <h1 id="ptitle">${esc(routeTitle(route))}</h1>
+      <span class="demo-tag">Prototype · données fictives</span>
+      <div class="gsearch">${ic('search',16)}<input id="gsearch" type="search" autocomplete="off" placeholder="Police, quittance, nom, CIN, téléphone…" aria-label="Rechercher"><div class="gres" id="gres" hidden></div></div>
+      ${isAdmin()?`<div class="bell-wrap"><button class="icon-btn" data-a="bell" aria-label="Notifications" id="bellbtn">${ic('bell')}<span class="bell-dot" id="belldot" hidden></span></button><div id="bellpop"></div></div>`:''}
+    </header>
+    <main id="main"></main>
+  </div></div>`;
+}
+function updateBell(){
+  const dot=$('#belldot');if(!dot)return;const n=S.notifs.filter(x=>!x.read).length;dot.hidden=!n;dot.textContent=n>99?'99+':n;
+  const pop=$('#bellpop');if(!pop)return;
+  if(!bellOpen){pop.innerHTML='';return}
+  const list=[...S.notifs].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,40);
+  const col={info:'var(--accent)',warn:'var(--warn)',alert:'var(--bad)'};
+  pop.innerHTML=`<div class="bell-pop"><header><b>Notifications</b><button class="btn sm ghost" data-a="notif-all">Tout marquer comme lu</button></header><div class="bell-list">${list.length?list.map(n=>`<button class="notif ${n.read?'':'unread'}" data-a="notif" data-id="${n.id}"><span class="dotl" style="background:${col[n.level]||col.info}"></span><span>${esc(n.text)}<small>${ago(n.date)}</small></span></button>`).join(''):'<div class="empty">Aucune notification.</div>'}</div></div>`;
+}
+
+/* ================= login ================= */
+function loginView(){
+  const accs=S.users.map(u=>`<button class="acc" data-a="demo-fill" data-id="${u.login}"><div class="av" style="background:${u.color}">${initials(u.name)}</div><div class="grow"><b>${esc(u.name)}</b><small>${u.role==='admin'?'Administrateur (gérant)':'Collaboratrice'}</small></div><span class="mono">${esc(u.login)} / ${esc(u.pwd)}</span></button>`).join('');
+  return `<div class="login">
+  <section class="login-art">
+    <div class="brand" style="padding:0">${LOGO}<div>AssurPay<small>Pour les agences d'assurance</small></div></div>
+    <h1>Le registre de l'agence, sans le carnet.</h1>
+    <p>Chaque assurance validée sur le portail de l'assureur est enregistrée automatiquement : qui l'a faite, à quelle heure, combien a été pris au client et ce qu'il reste à payer.</p>
+    <div class="ledger" aria-hidden="true">
+      <div class="h"><span>Date</span><span>Nom et prénom</span><span>Quittance</span><span>Montant</span></div>
+      <div><span>13/05</span><span>Tourisme · police 100404</span><span>0947JP</span><span>815</span></div>
+      <div><span>14/05</span><span>Divers · police 100071</span><span>2562LW</span><span>306</span></div>
+      <div><span>14/05</span><span>Tourisme · provisoire, reste 380</span><span>7692KA</span><span>450</span></div>
+    </div>
+  </section>
+  <section class="login-form">
+    <form id="f-login" novalidate>
+      <h2>Connexion</h2>
+      <div class="field"><label for="lg-user">Identifiant</label><input id="lg-user" autocomplete="username" required></div>
+      <div class="field"><label for="lg-pwd">Mot de passe</label><input id="lg-pwd" type="password" autocomplete="current-password" required></div>
+      <div class="err" id="lg-err" hidden></div>
+      <button class="btn primary" type="submit" style="height:40px">Se connecter</button>
+    </form>
+    <div class="demo-acc"><p>Comptes de démonstration</p>${accs}</div>
+    <p class="fine">Prototype. Les données sont fictives et restent dans ce navigateur. Ouvrez deux onglets (admin et collaboratrice) pour voir les notifications arriver en direct.</p>
+    <button class="btn sm ghost" style="align-self:flex-start" data-a="reset">Réinitialiser la démo</button>
+  </section></div>`;
+}
+
+/* ================= pages ================= */
+const PAGES={};
+PAGES.dashboard=()=>{
+  const cs=scopeContracts().filter(c=>c.status!=='annule'),tk=todayKey(),mk=tk.slice(0,7);
+  const today=cs.filter(c=>dayKey(c.createdAt)===tk),month=cs.filter(c=>monthKey(c.createdAt)===mk);
+  const pays=scopePayments(),encT=sum(pays.filter(p=>dayKey(p.date)===tk).map(p=>p.montant)),encM=sum(pays.filter(p=>monthKey(p.date)===mk).map(p=>p.montant));
+  const ecM=sum(month.map(ecartOf)),reste=sum(cs.map(resteOf)),nCred=cs.filter(c=>resteOf(c)>0).length;
+  const kp=`<div class="kpis">
+    <div class="kpi hl"><span class="l">Aujourd'hui</span><span class="v">${today.length} assurance${today.length>1?'s':''}</span><span class="s">${dh(encT)} encaissés</span></div>
+    ${isAdmin()?`<button class="kpi" data-a="nav" data-id="axa" style="text-align:left;cursor:pointer;font:inherit;color:inherit"><span class="l">À payer à AXA · ${monthLabel(mk)}</span><span class="v">${dh(sum(month.map(c=>c.du)))}</span><span class="s">${month.length} contrats · voir chaque mois →</span></button>`:''}
+    <div class="kpi"><span class="l">Encaissé ce mois</span><span class="v">${dh(encM)}</span><span class="s">en espèces</span></div>
+    <div class="kpi"><span class="l">Écart du mois</span><span class="v ${ecCls(ecM)}">${sdh(ecM)}</span><span class="s">${ecM<0?'à payer de votre poche':ecM>0?'gagné sur les arrondis':'aucun arrondi'}</span></div>
+    <div class="kpi"><span class="l">Crédits en cours</span><span class="v">${dh(reste)}</span><span class="s">${nCred} client${nCred>1?'s':''} doivent de l'argent</span></div>
+  </div>`;
+  if(!isAdmin())return `<div class="sec-h"><div><h2>Bonjour ${esc(ME().name.split(' ')[0])}</h2><p>${can('voirTout')?"Chiffres de toute l'agence.":'Vos chiffres personnels.'}</p></div></div>${kp}`;
+  const al=alerts(),feed=[...S.audit].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,9);
+  const rows=collabs().map(u=>{const m=month.filter(c=>c.collabId===u.id),mins=(Date.now()-new Date(u.ext.lastSeen))/6e4;return `<tr><td><span class="nm">${esc(u.name)}</span><span class="sub">${esc(u.ext.poste)}</span></td><td class="num">${m.length}</td><td class="num">${dh(sum(m.map(c=>c.du)))}</td><td class="num">${dh(sum(S.payments.filter(p=>p.userId===u.id&&monthKey(p.date)===mk).map(p=>p.montant)))}</td><td class="num ${ecCls(sum(m.map(ecartOf)))}">${sdh(sum(m.map(ecartOf)))}</td><td>${mins<=15?`<span class="pill good">${ic('check')}Active</span>`:`<span class="pill warn">Silence ${fmtMin(mins)}</span>`}</td></tr>`}).join('');
+  return `<div class="sec-h"><div><h2>Bonjour ${esc(ME().name.split(' ')[0])}</h2><p>${longDay(tk)} · ${esc(S.settings.agence)}</p></div><button class="btn" data-a="nav" data-id="portal">${ic('globe')}Ouvrir le portail simulé</button></div>
+  ${kp}
+  <div class="cols">
+    <section class="card"><div class="card-h"><h2>À traiter</h2><span class="pill ${al.length?'warn':'good'}">${al.length} point${al.length>1?'s':''}</span></div><div class="card-b">${al.length?`<div class="alerts">${al.map(x=>`<button class="alert ${x.lvl}" data-a="${x.a}" data-id="${x.id}">${ic('alert')}<span>${esc(x.text)}</span></button>`).join('')}</div>`:'<p class="muted">Rien à signaler.</p>'}</div></section>
+    <section class="card"><div class="card-h"><h2>Activité en direct</h2><button class="btn sm ghost" data-a="nav" data-id="activite">Tout voir ${ic('arrow',14)}</button></div><div class="card-b list">${feed.map(feedItem).join('')}</div></section>
+  </div>`;
+};
+function feedItem(a){const u=userOf(a.userId);return `<div class="li"><div class="av" style="background:${u.color};width:26px;height:26px;font-size:10.5px">${initials(u.name)}</div><div class="grow"><div>${a.contractId?`<a href="#" data-a="open-contract" data-id="${a.contractId}" style="color:inherit">${esc(a.text)}</a>`:esc(a.text)}</div><small>${esc(u.name)} · ${ago(a.date)}</small>${diffHtml(a)}</div></div>`}
+function diffHtml(a){return a.diff&&a.diff.length?a.diff.map(d=>`<div class="diff">${esc(d.label)} : ${esc(d.from)} → ${esc(d.to)}</div>`).join(''):''}
+
+PAGES.registre=()=>{
+  const f=F.reg;if(!f.from){f.from=todayKey().slice(0,8)+'01';f.to=todayKey()}
+  const wide=isAdmin()||can('voirTout');
+  let cs=scopeContracts().filter(c=>{const k=dayKey(c.createdAt);return k>=f.from&&k<=f.to});
+  if(f.collab)cs=cs.filter(c=>c.collabId===f.collab);
+  if(f.cat)cs=cs.filter(c=>c.categorie===f.cat);
+  if(f.type)cs=cs.filter(c=>f.type==='a_completer'||f.type==='annule'?c.status===f.type:c.status==='complet'&&(f.type==='credit'?c.type!=='comptant'&&resteOf(c)>0:c.type===f.type));
+  if(f.q){const q=norm(f.q);cs=cs.filter(c=>matchContract(c,q))}
+  cs.sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
+  const groups=[];let cur=null;cs.forEach(c=>{const k=dayKey(c.createdAt);if(!cur||cur.k!==k){cur={k,items:[]};groups.push(cur)}cur.items.push(c)});
+  const v=cs.filter(c=>c.status!=='annule');
+  const row=c=>{const cl=clientOf(c.clientId),ec=ecartOf(c),u=userOf(c.collabId);return `<tr class="row ${c.status==='annule'?'void':''}" data-a="open-contract" data-id="${c.id}" tabindex="0">
+    <td class="tnum">${ftime(c.createdAt)}</td><td><span class="nm">${esc(fullName(cl))}</span></td><td>${esc(c.categorie)}<span class="sub">${c.duree} mois</span></td>
+    <td><span class="mono">${c.attestation}</span><span class="sub mono">${c.police}</span></td><td class="mono">${c.quittance}</td>
+    <td class="num">${dh(c.du)}</td><td class="num">${c.status==='complet'?dh(c.pris):'—'}</td><td class="num ${ecCls(ec)}">${c.status==='complet'&&ec?sdh(ec):''}</td>
+    <td>${payPill(c)}</td>${wide?`<td><span class="av" style="background:${u.color};width:24px;height:24px;font-size:10px;display:inline-grid" title="${esc(u.name)}">${initials(u.name)}</span></td>`:''}</tr>`};
+  const body=groups.map(g=>{const vv=g.items.filter(c=>c.status!=='annule');return `<tr class="dayrow"><td colspan="${wide?10:9}">${longDay(g.k)}</td></tr>${g.items.map(row).join('')}${isAdmin()?`<tr class="totrow"><td></td><td colspan="4">Total · ${vv.length} contrat${vv.length>1?'s':''}</td><td class="num">${dh(sum(vv.map(c=>c.du)))}</td><td class="num">${dh(sum(vv.filter(c=>c.status==='complet').map(c=>c.pris)))}</td><td class="num ${ecCls(sum(vv.map(ecartOf)))}">${sdh(sum(vv.map(ecartOf)))}</td><td colspan="${wide?2:1}"></td></tr>`:''}`}).join('');
+  const sel=(id,key,opts,cur)=>`<select id="${id}" data-f="${key}">${opts.map(([v,l])=>`<option value="${esc(v)}" ${v===cur?'selected':''}>${esc(l)}</option>`).join('')}</select>`;
+  return `<div class="sec-h"><div><h2>${wide?"Registre de l'agence":'Mes saisies'}</h2><p>Chaque ligne vient d'une validation captée sur le portail de l'assureur. ${isAdmin()?"Seul l'administrateur peut modifier ou annuler une ligne.":"Pour corriger une ligne, signalez l'erreur à l'administrateur."}</p></div></div>
+  <div class="filters">
+    <div class="field"><label for="rf-from">Du</label><input type="date" id="rf-from" data-f="reg.from" value="${f.from}"></div>
+    <div class="field"><label for="rf-to">Au</label><input type="date" id="rf-to" data-f="reg.to" value="${f.to}"></div>
+    ${wide?`<div class="field"><label for="rf-col">Collaborateur</label>${sel('rf-col','reg.collab',[['','Tous'],...S.users.map(u=>[u.id,u.name])],f.collab)}</div>`:''}
+    <div class="field"><label for="rf-cat">Catégorie</label>${sel('rf-cat','reg.cat',[['','Toutes'],...S.settings.categories.map(c=>[c,c])],f.cat)}</div>
+    <div class="field"><label for="rf-type">Paiement</label>${sel('rf-type','reg.type',[['','Tous'],['comptant','Comptant'],['credit','Crédits non soldés'],['normal','Crédit normal'],['provisoire','Crédit provisoire'],['a_completer','À compléter'],['annule','Annulés']],f.type)}</div>
+    <div class="field" style="flex:1;min-width:180px"><label for="rf-q">Rechercher</label><input id="rf-q" type="search" data-fq="reg.q" value="${esc(f.q)}" placeholder="Nom, police, quittance…"></div>
+  </div>
+  ${isAdmin()?`<div class="kpis"><div class="kpi"><span class="l">Contrats</span><span class="v">${v.length}</span></div><div class="kpi"><span class="l">Montant dû (primes)</span><span class="v">${dh(sum(v.map(c=>c.du)))}</span></div><div class="kpi"><span class="l">Montant pris</span><span class="v">${dh(sum(v.filter(c=>c.status==='complet').map(c=>c.pris)))}</span></div><div class="kpi"><span class="l">Écart net</span><span class="v ${ecCls(sum(v.map(ecartOf)))}">${sdh(sum(v.map(ecartOf)))}</span></div></div>`:''}
+  <div class="tbl-wrap"><table><thead><tr><th>Heure</th><th>Nom et prénom</th><th>Catégorie</th><th>Attestation / Police</th><th>Quittance</th><th class="num">Dû</th><th class="num">Pris</th><th class="num">Écart</th><th>Paiement</th>${wide?'<th>Par</th>':''}</tr></thead><tbody>${body||`<tr><td colspan="10" class="empty">Aucune assurance pour ces filtres.</td></tr>`}</tbody></table></div>`;
+};
+
+PAGES.credits=()=>{
+  const f=F.cred;
+  let items=S.contracts.filter(c=>c.status==='complet'&&c.type!=='comptant').map(c=>({c,paid:paidOf(c),reste:resteOf(c),ps:paperState(c)}));
+  const open=items.filter(x=>x.reste>0);
+  const tabs=[['encours','En cours',open.length],['provisoire','Provisoires',open.filter(x=>x.c.type==='provisoire').length],['normal','Crédits normaux',open.filter(x=>x.c.type==='normal').length],['soldes','Soldés',items.filter(x=>x.reste<=0).length]];
+  items=f.tab==='soldes'?items.filter(x=>x.reste<=0):f.tab==='encours'?open:open.filter(x=>x.c.type===f.tab);
+  if(f.q){const q=norm(f.q);items=items.filter(x=>matchContract(x.c,q))}
+  const rank=x=>x.ps&&x.ps.d!==undefined&&x.c.type==='provisoire'&&lastPaper(x.c).type==='provisoire'?x.ps.d:999;
+  items.sort((a,b)=>rank(a)-rank(b)||b.reste-a.reste);
+  const expiring=open.filter(x=>x.ps&&x.ps.d!==undefined&&x.ps.d>=0&&x.ps.d<=5).length,expired=open.filter(x=>x.ps&&x.ps.d<0).length;
+  const rows=items.map(({c,paid,reste,ps})=>{const cl=clientOf(c.clientId),lp=paysOf(c).pop(),pct=Math.min(100,Math.round(paid/c.pris*100));return `<tr class="row" data-a="open-contract" data-id="${c.id}" tabindex="0">
+    <td><span class="nm">${esc(fullName(cl))}</span><span class="sub">${esc(cl.tel)} · police ${c.police}</span></td>
+    <td>${c.type==='provisoire'?'Provisoire':'Normal'}<span class="sub">${esc(c.categorie)} · ${c.duree} mois</span></td>
+    <td class="num">${dh(c.pris)}</td><td class="num">${dh(paid)}</td>
+    <td><div class="bar" title="${pct} %"><i style="width:${pct}%"></i></div></td>
+    <td class="num"><b class="${reste>0?'neg':''}">${reste>0?dh(reste):'Soldé'}</b></td>
+    <td>${ps?`<span class="pill ${ps.lvl}">${esc(ps.text)}</span>`:''}</td>
+    <td class="tnum">${lp?fdate(lp.date):'—'}</td>
+    <td><div style="display:flex;gap:6px">${reste>0&&can('paiements')?`<button class="btn sm" data-a="pay" data-id="${c.id}">Encaisser</button>`:''}${reste>0&&can('rappels')?`<button class="btn sm" data-a="wa" data-id="${c.id}" aria-label="Rappel WhatsApp">${ic('msg')}</button>`:''}</div></td></tr>`}).join('');
+  return `<div class="sec-h"><div><h2>Crédits clients</h2><p>Crédit normal : le client a le définitif et doit encore de l'argent. Crédit provisoire : il n'a que des papiers provisoires et reçoit le définitif quand tout est payé.</p></div></div>
+  ${isAdmin()?`<div class="kpis"><div class="kpi hl"><span class="l">Reste à encaisser</span><span class="v">${dh(sum(open.map(x=>x.reste)))}</span><span class="s">${open.length} crédit${open.length>1?'s':''} en cours</span></div><div class="kpi"><span class="l">Provisoires qui expirent sous 5 jours</span><span class="v">${expiring}</span></div><div class="kpi"><span class="l">Papiers provisoires expirés</span><span class="v ${expired?'neg':''}">${expired}</span><span class="s">client qui roule sans papier valide</span></div></div>`:''}
+  <div class="tabs" role="tablist">${tabs.map(([k,l,n])=>`<button role="tab" aria-selected="${f.tab===k}" data-a="cred-tab" data-id="${k}">${l} · ${n}</button>`).join('')}</div>
+  <div class="filters"><div class="field" style="flex:1;max-width:360px"><label for="cr-q">Rechercher</label><input id="cr-q" type="search" data-fq="cred.q" value="${esc(f.q)}" placeholder="Nom, téléphone, police…"></div></div>
+  <div class="tbl-wrap"><table><thead><tr><th>Client</th><th>Type</th><th class="num">Total</th><th class="num">Payé</th><th>Progression</th><th class="num">Reste</th><th>Papier</th><th>Dernier paiement</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="9" class="empty">Aucun crédit dans cette liste.</td></tr>'}</tbody></table></div>`;
+};
+
+PAGES.clients=()=>{
+  const q=norm(F.cli.q);
+  let list=S.clients.map(cl=>{const cs=S.contracts.filter(c=>c.clientId===cl.id&&c.status!=='annule');return{cl,n:cs.length,reste:sum(cs.map(resteOf)),last:cs.map(c=>c.createdAt).sort().pop()}});
+  if(q)list=list.filter(x=>[x.cl.nom,x.cl.prenom,x.cl.prenom+' '+x.cl.nom,x.cl.nom+' '+x.cl.prenom,x.cl.cin,x.cl.tel,x.cl.immat].some(v=>norm(v).includes(q)));
+  list.sort((a,b)=>(b.last||'').localeCompare(a.last||''));
+  return `<div class="sec-h"><div><h2>Clients</h2><p>${isAdmin()?S.clients.length+' clients. ':''}Un client est créé automatiquement à sa première validation sur le portail.</p></div></div>
+  <div class="filters"><div class="field" style="flex:1;max-width:380px"><label for="cl-q">Rechercher</label><input id="cl-q" type="search" data-fq="cli.q" value="${esc(F.cli.q)}" placeholder="Nom, CIN, téléphone, immatriculation…"></div></div>
+  <div class="tbl-wrap"><table><thead><tr><th>Client</th><th>CIN</th><th>Téléphone</th><th>Véhicule</th><th class="num">Contrats</th><th class="num">Reste dû</th><th>Dernière assurance</th></tr></thead><tbody>${list.map(x=>`<tr class="row" data-a="open-client" data-id="${x.cl.id}" tabindex="0"><td><span class="nm">${esc(fullName(x.cl))}</span></td><td class="mono">${esc(x.cl.cin)}</td><td class="tnum">${esc(x.cl.tel)}</td><td>${esc(x.cl.vehicule)}<span class="sub mono">${esc(x.cl.immat)}</span></td><td class="num">${x.n}</td><td class="num">${x.reste?`<b class="neg">${dh(x.reste)}</b>`:'—'}</td><td class="tnum">${x.last?fdate(x.last):'—'}</td></tr>`).join('')||'<tr><td colspan="7" class="empty">Aucun client trouvé.</td></tr>'}</tbody></table></div>`;
+};
+
+PAGES.caisse=()=>{
+  const tk=todayKey();
+  if(!isAdmin()){
+    const u=ME(),ex=expected(tk,u.id),cl=S.closes.find(x=>x.day===tk&&x.userId===u.id),hist=S.closes.filter(x=>x.userId===u.id).sort((a,b)=>b.day.localeCompare(a.day)).slice(0,8);
+    return `<div class="sec-h"><div><h2>Ma caisse · ${longDay(tk)}</h2><p>Ce que vous avez encaissé aujourd'hui. Comptez l'argent le soir et clôturez : tout écart est signalé à l'administrateur.</p></div></div>
+    <div class="kpis"><div class="kpi hl"><span class="l">Espèces attendues</span><span class="v">${dh(ex.esp)}</span></div><div class="kpi"><span class="l">Chèques attendus</span><span class="v">${dh(ex.chq)}</span></div><div class="kpi"><span class="l">Virements (info)</span><span class="v">${dh(ex.vir)}</span></div><div class="kpi"><span class="l">Opérations</span><span class="v">${ex.n}</span></div></div>
+    <div class="cols">
+      <section class="card"><div class="card-h"><h2>Encaissements du jour</h2></div><div class="card-b list">${ex.list.length?ex.list.sort((a,b)=>b.date.localeCompare(a.date)).map(p=>{const c=K(p.contractId);return `<div class="li"><div class="grow"><b>${esc(fullName(clientOf(c.clientId)))}</b><small>${ftime(p.date)} · ${p.mode} · police ${c.police}</small></div><b class="tnum">${dh(p.montant)}</b></div>`}).join(''):'<p class="muted">Aucun encaissement aujourd\'hui.</p>'}</div></section>
+      <section class="card"><div class="card-h"><h2>Clôture du soir</h2>${cl?`<span class="pill good">${ic('check')}Clôturée à ${ftime(cl.closedAt)}</span>`:''}</div><div class="card-b">${cl?closeSummary(cl):`<form id="f-close" class="m-body" style="padding:0">
+        <div class="grid2"><div class="field"><label for="cl-esp">Espèces comptées (DH)</label><input id="cl-esp" type="number" min="0" step="1" inputmode="numeric" required></div><div class="field"><label for="cl-chq">Chèques comptés (DH)</label><input id="cl-chq" type="number" min="0" step="1" inputmode="numeric" value="${ex.chq}"></div></div>
+        <div id="cl-live" class="hint">Saisissez les espèces comptées.</div>
+        <div class="field"><label for="cl-note">Note (si écart)</label><input id="cl-note" placeholder="Ex. : erreur de rendu de monnaie"></div>
+        <div class="m-foot"><button class="btn primary" type="submit">Clôturer la caisse</button></div></form>`}</div></section>
+    </div>
+    ${hist.length?`<section><h2 style="font-size:16px;margin-bottom:10px">Mes dernières clôtures</h2>${closeTable(hist,false)}</section>`:''}`;
+  }
+  const day=F.caisse.day||tk;
+  const people=S.users.filter(u=>u.role==='collab'||S.payments.some(p=>p.userId===u.id&&dayKey(p.date)===day));
+  const rows=people.map(u=>{const ex=expected(day,u.id),cl=S.closes.find(x=>x.day===day&&x.userId===u.id);return `<tr><td><span class="nm">${esc(u.name)}</span><span class="sub">${esc(u.ext.poste)}</span></td><td class="num">${dh(ex.esp)}</td><td class="num">${dh(ex.chq)}</td><td class="num">${dh(ex.vir)}</td><td class="num">${cl?dh(cl.compteEsp+cl.compteChq):'—'}</td><td class="num ${cl?ecCls(cl.ecart):''}">${cl?sdh(cl.ecart):'—'}</td><td>${cl?`<span class="pill good">Clôturée ${ftime(cl.closedAt)}</span>`:ex.n?(day===tk?'<span class="pill neutral">En cours</span>':'<span class="pill warn">Non clôturée</span>'):'<span class="pill neutral">Aucune opération</span>'}${cl&&cl.note?`<span class="sub">${esc(cl.note)}</span>`:''}</td></tr>`}).join('');
+  const hist=[...S.closes].sort((a,b)=>b.day.localeCompare(a.day)||a.userId.localeCompare(b.userId)).slice(0,14);
+  return `<div class="sec-h"><div><h2>Caisse</h2><p>Ce que chaque collaborateur doit avoir en caisse, et ce qu'il a compté à la clôture.</p></div><div class="field"><label for="cs-day">Jour</label><input type="date" id="cs-day" data-f="caisse.day" value="${day}" max="${tk}"></div></div>
+  <section><h2 style="font-size:16px;margin-bottom:10px;text-transform:capitalize">${longDay(day)}</h2><div class="tbl-wrap"><table><thead><tr><th>Collaborateur</th><th class="num">Espèces attendues</th><th class="num">Chèques attendus</th><th class="num">Virements</th><th class="num">Compté</th><th class="num">Écart</th><th>Statut</th></tr></thead><tbody>${rows}</tbody></table></div></section>
+  <section><h2 style="font-size:16px;margin-bottom:10px">Dernières clôtures</h2>${closeTable(hist,true)}</section>`;
+};
+function closeSummary(cl){return `<dl class="kv"><div><dt>Espèces attendues</dt><dd>${dh(cl.attEsp)}</dd></div><div><dt>Espèces comptées</dt><dd>${dh(cl.compteEsp)}</dd></div><div><dt>Chèques</dt><dd>${dh(cl.compteChq)}</dd></div><div><dt>Écart</dt><dd class="${ecCls(cl.ecart)}">${sdh(cl.ecart)}</dd></div></dl>${cl.note?`<p class="muted" style="margin:10px 0 0">${esc(cl.note)}</p>`:''}`}
+function closeTable(list,who){return `<div class="tbl-wrap"><table><thead><tr><th>Jour</th>${who?'<th>Collaborateur</th>':''}<th class="num">Attendu</th><th class="num">Compté</th><th class="num">Écart</th><th>Note</th></tr></thead><tbody>${list.map(c=>`<tr><td class="tnum">${fdate(c.day+'T12:00')}</td>${who?`<td>${esc(userOf(c.userId).name)}</td>`:''}<td class="num">${dh(c.attEsp+c.attChq)}</td><td class="num">${dh(c.compteEsp+c.compteChq)}</td><td class="num ${ecCls(c.ecart)}">${c.ecart?sdh(c.ecart):'0'}</td><td class="muted">${esc(c.note)}</td></tr>`).join('')}</tbody></table></div>`}
+
+PAGES.ecarts=()=>{
+  const months=[...new Set(S.contracts.map(c=>monthKey(c.createdAt)))].sort().reverse();
+  const mk=F.ec.month||months[0]||todayKey().slice(0,7);
+  const cs=S.contracts.filter(c=>c.status==='complet'&&monthKey(c.createdAt)===mk),withE=cs.filter(c=>ecartOf(c)!==0).sort((a,b)=>ecartOf(a)-ecartOf(b));
+  const net=sum(cs.map(ecartOf)),loss=sum(cs.map(ecartOf).filter(x=>x<0)),gain=sum(cs.map(ecartOf).filter(x=>x>0));
+  return `<div class="sec-h"><div><h2>Écarts · ${monthLabel(mk)}</h2><p>La différence entre le montant dû à l'assureur et le montant pris au client (853 → 850, 805 → 810). Un écart net négatif, c'est ce que vous payez de votre poche ce mois-ci.</p></div><div class="field"><label for="ec-m">Mois</label><select id="ec-m" data-f="ec.month">${months.map(m=>`<option value="${m}" ${m===mk?'selected':''}>${monthLabel(m)}</option>`).join('')}</select></div></div>
+  <div class="kpis"><div class="kpi hl"><span class="l">Écart net du mois</span><span class="v ${ecCls(net)}">${sdh(net)}</span><span class="s">${net<0?'à payer de votre poche':'en votre faveur'}</span></div><div class="kpi"><span class="l">Pertes (arrondis vers le bas)</span><span class="v neg">${sdh(loss)}</span></div><div class="kpi"><span class="l">Gains (arrondis vers le haut)</span><span class="v pos">${sdh(gain)}</span></div><div class="kpi"><span class="l">Contrats avec écart</span><span class="v">${withE.length} / ${cs.length}</span></div></div>
+  <div class="tbl-wrap"><table><thead><tr><th>Collaborateur</th><th class="num">Contrats</th><th class="num">Avec écart</th><th class="num">Pertes</th><th class="num">Gains</th><th class="num">Net</th><th class="num">Limite</th></tr></thead><tbody>${S.users.map(u=>{const m=cs.filter(c=>c.collabId===u.id);if(!m.length)return '';const e=m.map(ecartOf);return `<tr><td class="nm">${esc(u.name)}</td><td class="num">${m.length}</td><td class="num">${e.filter(x=>x).length}</td><td class="num neg">${sdh(sum(e.filter(x=>x<0)))}</td><td class="num pos">${sdh(sum(e.filter(x=>x>0)))}</td><td class="num ${ecCls(sum(e))}">${sdh(sum(e))}</td><td class="num">${u.role==='admin'?'—':'± '+u.maxEcart+' DH'}</td></tr>`}).join('')}</tbody></table></div>
+  <section><h2 style="font-size:16px;margin-bottom:10px">Détail</h2><div class="tbl-wrap"><table><thead><tr><th>Date</th><th>Client</th><th>Police</th><th class="num">Dû</th><th class="num">Pris</th><th class="num">Écart</th><th>Par</th></tr></thead><tbody>${withE.map(c=>`<tr class="row" data-a="open-contract" data-id="${c.id}" tabindex="0"><td class="tnum">${fdate(c.createdAt)}</td><td class="nm">${esc(fullName(clientOf(c.clientId)))}</td><td class="mono">${c.police}</td><td class="num">${dh(c.du)}</td><td class="num">${dh(c.pris)}</td><td class="num ${ecCls(ecartOf(c))}">${sdh(ecartOf(c))}</td><td>${esc(userOf(c.collabId).name)}</td></tr>`).join('')||'<tr><td colspan="7" class="empty">Aucun écart ce mois-ci.</td></tr>'}</tbody></table></div></section>`;
+};
+
+PAGES.assureur=()=>{
+  const cs=S.contracts.filter(c=>c.status!=='annule'),mk=todayKey().slice(0,7);
+  const emis=sum(cs.filter(c=>c.status==='complet'||c.status==='a_completer').map(c=>c.du)),verse=sum(S.versements.map(v=>v.montant)),solde=emis-verse,credits=sum(cs.map(resteOf));
+  const months=[...new Set([...cs.map(c=>monthKey(c.createdAt)),...S.versements.map(v=>monthKey(v.date))])].sort().reverse();
+  const vs=[...S.versements].sort((a,b)=>b.date.localeCompare(a.date));
+  return `<div class="sec-h"><div><h2>Solde dû à ${esc(S.settings.assureur)}</h2><p>Chaque assurance validée sur le portail est une prime due à l'assureur, que le client ait payé ou non.</p></div>${isAdmin()?`<button class="btn primary" data-a="add-versement">${ic('plus')}Enregistrer un versement</button>`:''}</div>
+  <div class="kpis"><div class="kpi hl"><span class="l">Solde à reverser</span><span class="v">${dh(solde)}</span><span class="s">dont ${dh(credits)} pas encore payés par les clients</span></div><div class="kpi"><span class="l">Primes émises · ${monthLabel(mk)}</span><span class="v">${dh(sum(cs.filter(c=>monthKey(c.createdAt)===mk).map(c=>c.du)))}</span></div><div class="kpi"><span class="l">Total primes émises</span><span class="v">${dh(emis)}</span></div><div class="kpi"><span class="l">Total versé</span><span class="v">${dh(verse)}</span></div></div>
+  <div class="cols">
+    <section><h2 style="font-size:16px;margin-bottom:10px">Par mois</h2><div class="tbl-wrap"><table><thead><tr><th>Mois</th><th class="num">Primes émises</th><th class="num">Encaissé clients</th><th class="num">Versé à l'assureur</th></tr></thead><tbody>${months.map(m=>`<tr><td style="text-transform:capitalize">${monthLabel(m)}</td><td class="num">${dh(sum(cs.filter(c=>monthKey(c.createdAt)===m).map(c=>c.du)))}</td><td class="num">${dh(sum(S.payments.filter(p=>monthKey(p.date)===m).map(p=>p.montant)))}</td><td class="num">${dh(sum(S.versements.filter(v=>monthKey(v.date)===m).map(v=>v.montant)))}</td></tr>`).join('')}</tbody></table></div></section>
+    <section><h2 style="font-size:16px;margin-bottom:10px">Versements</h2><div class="tbl-wrap"><table><thead><tr><th>Date</th><th>Référence</th><th class="num">Montant</th></tr></thead><tbody>${vs.map(v=>`<tr><td class="tnum">${fdate(v.date)}</td><td class="mono">${esc(v.ref)}<span class="sub">${esc(v.mode)}</span></td><td class="num">${dh(v.montant)}</td></tr>`).join('')||'<tr><td colspan="3" class="empty">Aucun versement.</td></tr>'}</tbody></table></div></section>
+  </div>`;
+};
+
+PAGES.axa=()=>{
+  S.axaPaid=S.axaPaid||{};
+  const cs=S.contracts.filter(c=>c.status!=='annule'),mk=todayKey().slice(0,7);
+  const months=[...new Set(cs.map(c=>monthKey(c.createdAt)))].sort().reverse();
+  const info=m=>{const l=cs.filter(c=>monthKey(c.createdAt)===m);return{n:l.length,du:sum(l.map(c=>c.du)),pris:sum(l.filter(c=>c.status==='complet').map(c=>c.pris)),reste:sum(l.map(resteOf)),ec:sum(l.map(ecartOf))}};
+  const unpaid=months.filter(m=>!S.axaPaid[m]),cur=info(mk);
+  return `<div class="sec-h"><div><h2>À payer à AXA</h2><p>Chaque assurance validée sur le portail doit être payée à AXA, même si le client n'a pas encore tout payé à l'agence. Voici le montant de chaque mois.</p></div></div>
+  <div class="kpis"><div class="kpi hl"><span class="l">À payer · ${monthLabel(mk)}</span><span class="v">${dh(cur.du)}</span><span class="s">${cur.n} assurances ce mois</span></div><div class="kpi"><span class="l">Total pas encore payé à AXA</span><span class="v ${unpaid.length?'neg':''}">${dh(sum(unpaid.map(m=>info(m).du)))}</span><span class="s">${unpaid.length} mois</span></div><div class="kpi"><span class="l">Encore chez les clients (crédits)</span><span class="v">${dh(sum(cs.map(resteOf)))}</span><span class="s">vous le payez à AXA avant de l'encaisser</span></div></div>
+  <div class="tbl-wrap"><table><thead><tr><th>Mois</th><th class="num">Assurances</th><th class="num">À payer à AXA</th><th class="num">Encore chez les clients</th><th>Paiement AXA</th></tr></thead><tbody>${months.map(m=>{const x=info(m),pd=S.axaPaid[m];return `<tr><td style="text-transform:capitalize;font-weight:600">${monthLabel(m)}</td><td class="num">${x.n}</td><td class="num"><b>${dh(x.du)}</b></td><td class="num">${x.reste?`<span class="neg">${dh(x.reste)}</span>`:'—'}</td><td>${pd?`<span class="pill good">${ic('check')}Payé le ${fdate(pd)}</span> <button class="btn sm ghost" data-a="axa-paid" data-id="${m}">Annuler</button>`:`<button class="btn sm primary" data-a="axa-paid" data-id="${m}">Marquer comme payé</button>`}</td></tr>`}).join('')}</tbody></table></div>`;
+};
+const ATYPES={validation:'Validation portail',complement:'Encaissement complété',paiement:'Paiement',papier:'Papier provisoire',definitif:'Définitif remis',modification:'Modification',annulation:'Annulation',rappel:'Rappel WhatsApp',cloture:'Clôture de caisse',connexion:'Connexion',tentative:'Tentative de contournement',versement:'Versement assureur',permission:'Droits',parametre:'Paramètres',signalement:'Erreur signalée',client:'Fiche client',extension:'Extension'};
+PAGES.activite=()=>{
+  const f=F.act;let l=[...S.audit].sort((a,b)=>b.date.localeCompare(a.date));
+  if(f.user)l=l.filter(a=>a.userId===f.user);if(f.type)l=l.filter(a=>a.type===f.type);
+  const shown=l.slice(0,300);
+  return `<div class="sec-h"><div><h2>Journal d'activité</h2><p>Tout ce qui se passe dans l'agence, dans l'ordre. Rien ne peut être effacé de ce journal.</p></div></div>
+  <div class="filters"><div class="field"><label for="ac-u">Personne</label><select id="ac-u" data-f="act.user"><option value="">Tout le monde</option>${S.users.map(u=>`<option value="${u.id}" ${f.user===u.id?'selected':''}>${esc(u.name)}</option>`).join('')}</select></div><div class="field"><label for="ac-t">Action</label><select id="ac-t" data-f="act.type"><option value="">Toutes</option>${Object.entries(ATYPES).map(([k,v])=>`<option value="${k}" ${f.type===k?'selected':''}>${v}</option>`).join('')}</select></div></div>
+  <div class="tbl-wrap"><table><thead><tr><th>Date</th><th>Heure</th><th>Personne</th><th>Action</th><th>Détail</th></tr></thead><tbody>${shown.map(a=>`<tr ${a.contractId?`class="row" data-a="open-contract" data-id="${a.contractId}" tabindex="0"`:''}><td class="tnum">${fdate(a.date)}</td><td class="tnum">${ftime(a.date)}</td><td>${esc(userOf(a.userId).name)}</td><td><span class="pill ${a.type==='tentative'?'bad':a.type==='modification'||a.type==='annulation'||a.type==='signalement'?'warn':'neutral'}">${ATYPES[a.type]||a.type}</span></td><td>${esc(a.text)}${diffHtml(a)}</td></tr>`).join('')||'<tr><td colspan="5" class="empty">Aucune activité.</td></tr>'}</tbody></table></div>${l.length>300?`<p class="muted">300 dernières actions sur ${l.length}.</p>`:''}`;
+};
+
+const PERMS=[
+  ['voirTout','Voir les saisies des autres',"Sinon, le registre ne montre que ses propres assurances."],
+  ['credit','Accorder un crédit','Crédit normal ou provisoire, et remettre un nouveau papier provisoire.'],
+  ['ecart','Prendre un montant différent du dû','Arrondir 853 → 850 ou 805 → 810, dans la limite ci-dessous.'],
+  ['paiements','Encaisser les paiements des crédits','Quand un client revient payer une partie.'],
+  ['definitif','Remettre le papier définitif','Seulement quand le crédit est soldé.'],
+  ['rappels','Préparer des rappels WhatsApp','Aux clients qui doivent de l\'argent.'],
+  ['clients','Modifier les fiches clients','Téléphone, CIN, immatriculation.'],
+  ['stats','Voir le tableau de bord','Chiffres du jour et du mois.'],
+  ['assureur',"Voir le solde dû à l'assureur",'']
+];
+PAGES.equipe=()=>{
+  const mk=todayKey().slice(0,7);
+  const cards=collabs().map(u=>{const m=S.contracts.filter(c=>c.collabId===u.id&&c.status!=='annule'&&monthKey(c.createdAt)===mk),mins=(Date.now()-new Date(u.ext.lastSeen))/6e4;return `<section class="card ucard">
+    <header><div class="av" style="background:${u.color};width:40px;height:40px">${initials(u.name)}</div><div class="grow"><b>${esc(u.name)}</b><div class="muted" style="font-size:12.5px">Identifiant <span class="mono">${esc(u.login)}</span></div></div><label class="checkrow" for="ua-${u.id}"><span class="muted" style="font-size:12.5px">${u.active?'Compte actif':'Désactivé'}</span><input type="checkbox" class="sw" id="ua-${u.id}" data-uact="${u.id}" ${u.active?'checked':''}></label></header>
+    <div class="extblock"><div class="row1">${ic('puzzle',16)}<b style="font-size:13px">Extension AssurPay Capture</b><span class="muted" style="font-size:12px">· ${esc(u.ext.poste)}</span></div>
+      <div class="row1"><span class="pill acc">${ic('lock')}Installée par l'organisation</span>${mins<=15?`<span class="pill good">${ic('check')}Signal reçu ${ago(u.ext.lastSeen)}</span>`:`<span class="pill warn">${ic('alert')}Aucun signal depuis ${fmtMin(mins)}</span>`}</div>
+      <div class="row1"><span class="faint" style="font-size:12px">Elle ne peut ni la désactiver ni la supprimer. Un silence pendant les heures de travail est signalé.</span><button class="btn sm ghost" data-a="sim-silence" data-id="${u.id}">Simuler un silence</button></div></div>
+    <div class="minis"><div><span>Contrats (mois)</span><b>${m.length}</b></div><div><span>Primes</span><b>${dh(sum(m.map(c=>c.du)))}</b></div><div><span>Encaissé</span><b>${dh(sum(S.payments.filter(p=>p.userId===u.id&&monthKey(p.date)===mk).map(p=>p.montant)))}</b></div><div><span>Écart</span><b class="${ecCls(sum(m.map(ecartOf)))}">${sdh(sum(m.map(ecartOf)))}</b></div></div>
+    <div class="perms"><div class="eyebrow" style="padding:4px 0 6px">Droits</div>
+      ${PERMS.map(([k,l,d])=>`<label class="perm" for="pm-${u.id}-${k}"><div><b>${l}</b>${d?`<small>${d}</small>`:''}</div><input type="checkbox" class="sw" id="pm-${u.id}-${k}" data-perm="${k}" data-user="${u.id}" ${u.perms[k]?'checked':''}></label>${k==='ecart'&&u.perms.ecart?`<div class="perm-sub"><label for="mx-${u.id}">Écart maximum</label><input type="number" id="mx-${u.id}" min="0" max="100" step="1" data-max="${u.id}" value="${u.maxEcart}"> DH par contrat</div>`:''}`).join('')}
+      <div class="lockline">${ic('lock',14)}Modifier ou annuler une assurance : réservé à l'administrateur.</div></div>
+  </section>`}).join('');
+  return `<div class="sec-h"><div><h2>Équipe et droits</h2><p>Réglez ce que chaque collaborateur peut faire. Chaque changement est enregistré dans le journal.</p></div><button class="btn primary" data-a="add-user">${ic('plus')}Ajouter un collaborateur</button></div><div class="ucards">${cards}</div>`;
+};
+
+PAGES.parametres=()=>{
+  const s=S.settings;
+  return `<div class="sec-h"><div><h2>Paramètres</h2><p>Réglages de l'agence et des alertes.</p></div></div>
+  <form id="f-settings" class="card" style="padding:16px;display:flex;flex-direction:column;gap:16px">
+    <h2 style="font-size:16px">Agence</h2>
+    <div class="grid2"><div class="field"><label for="st-ag">Nom de l'agence</label><input id="st-ag" value="${esc(s.agence)}"></div><div class="field"><label for="st-vi">Ville</label><input id="st-vi" value="${esc(s.ville)}"></div><div class="field"><label for="st-as">Compagnie</label><input id="st-as" value="${esc(s.assureur)}"></div><div class="field"><label for="st-tel">WhatsApp de l'administrateur</label><input id="st-tel" value="${esc(s.telAdmin)}"></div></div>
+    <h2 style="font-size:16px">Crédits et alertes</h2>
+    <div class="grid2"><div class="field"><label for="st-dp">Durée d'un papier provisoire (jours)</label><input id="st-dp" type="number" min="1" max="90" value="${s.dureeProvisoire}"></div><div class="field"><label for="st-dc">Alerter si l'encaissement n'est pas saisi après (heures)</label><input id="st-dc" type="number" min="1" max="48" value="${s.delaiComplement}"></div></div>
+    <h2 style="font-size:16px">Notifications de validation</h2>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <label class="checkrow"><input type="checkbox" id="st-n-app" ${s.notif.app?'checked':''}> Dans l'application (cloche en haut à droite)</label>
+      <label class="checkrow"><input type="checkbox" id="st-n-wa" ${s.notif.whatsapp?'checked':''}> WhatsApp de l'administrateur <span class="pill neutral">nécessite WhatsApp Business API</span></label>
+      <label class="checkrow"><input type="checkbox" id="st-n-em" ${s.notif.email?'checked':''}> E-mail</label>
+    </div>
+    <div class="field" style="max-width:340px"><label for="st-mode">Fréquence</label><select id="st-mode"><option value="chaque" ${s.notifMode==='chaque'?'selected':''}>À chaque validation</option><option value="resume" ${s.notifMode==='resume'?'selected':''}>Un résumé par jour à 20 h</option></select></div>
+    <div class="m-foot" style="justify-content:flex-start"><button class="btn primary" type="submit">Enregistrer</button></div>
+  </form>
+  <section class="card" style="padding:16px;display:flex;flex-direction:column;gap:12px"><h2 style="font-size:16px">Catégories</h2><div class="chips">${s.categories.map((c,i)=>`<span class="chip">${esc(c)}<button data-a="cat-rm" data-id="${i}" aria-label="Retirer ${esc(c)}">${ic('x')}</button></span>`).join('')}</div><div style="display:flex;gap:8px;flex-wrap:wrap"><input id="cat-new" placeholder="Nouvelle catégorie" style="max-width:240px"><button class="btn" data-a="cat-add">${ic('plus')}Ajouter</button></div></section>
+  <section class="card" style="padding:16px;display:flex;flex-direction:column;gap:10px"><h2 style="font-size:16px">Données de démonstration</h2><p class="muted" style="margin:0">Remet le prototype à son état de départ. Tout ce que vous avez saisi dans ce navigateur sera effacé.</p><div><button class="btn danger" data-a="reset">Réinitialiser la démo</button></div></section>`;
+};
+
+PAGES.portal=()=>{
+  const u=ME(),mine=S.contracts.filter(c=>c.collabId===u.id&&dayKey(c.createdAt)===todayKey()).sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
+  let inner;
+  if(portal.step==='done'&&K(portal.lastId)){const c=K(portal.lastId),cl=clientOf(c.clientId);inner=`<div class="done"><span class="stamp">${ic('check',22)}Attestation émise</span><p class="muted" style="margin:0">${esc(fullName(cl))} · ${esc(c.categorie)} · ${c.duree} mois · du ${fdate(c.debut)} au ${fdate(c.fin)}</p>
+    <div class="nums"><div><span>N° attestation</span><b>${c.attestation}</b></div><div><span>N° police</span><b>${c.police}</b></div><div><span>N° quittance</span><b>${c.quittance}</b></div><div><span>Prime TTC</span><b style="font-family:var(--cond);font-weight:600;color:var(--text)">${dh(c.du)}</b></div></div>
+    <button class="btn primary" data-a="portal-new">${ic('plus')}Nouvelle attestation</button></div>`}
+  else{const cats=S.settings.categories;inner=`<form id="f-portal" class="pbody" style="padding:0" novalidate>
+    <div class="field"><label for="pt-client">Client</label><select id="pt-client"><option value="">Nouveau client</option>${[...S.clients].sort((a,b)=>a.nom.localeCompare(b.nom)).map(c=>`<option value="${c.id}">${esc(fullName(c))} · ${esc(c.cin)}</option>`).join('')}</select></div>
+    <fieldset><legend>Assuré</legend><div class="grid2"><div class="field"><label for="pt-nom">Nom</label><input id="pt-nom" required autocomplete="off"></div><div class="field"><label for="pt-prenom">Prénom</label><input id="pt-prenom" required autocomplete="off"></div><div class="field"><label for="pt-cin">CIN</label><input id="pt-cin" required autocomplete="off"></div><div class="field"><label for="pt-tel">Téléphone</label><input id="pt-tel" inputmode="tel" autocomplete="off"></div></div></fieldset>
+    <fieldset><legend>Véhicule et garantie</legend><div class="grid2"><div class="field"><label for="pt-immat">Immatriculation</label><input id="pt-immat" placeholder="12345-A-6" autocomplete="off"></div><div class="field"><label for="pt-veh">Marque et modèle</label><input id="pt-veh" autocomplete="off"></div><div class="field"><label for="pt-cat">Catégorie</label><select id="pt-cat">${cats.map(c=>`<option>${esc(c)}</option>`).join('')}</select></div><div class="field"><label for="pt-duree">Durée</label><select id="pt-duree"><option value="1">1 mois</option><option value="3" selected>3 mois</option><option value="6">6 mois</option><option value="12">12 mois</option></select></div></div></fieldset>
+    <div class="prime"><div><div class="lbl">Prime TTC</div><b id="pt-prime">${dh(primeOf(cats[0],3))}</b></div><button class="btn primary" type="submit" id="pt-submit" style="height:40px">Valider l'attestation</button></div>
+    <div class="err" id="pt-err" hidden></div></form>`}
+  const lastCap=S.contracts.filter(c=>c.collabId===u.id).map(c=>c.createdAt).sort().pop();
+  return `<div class="sec-h"><div><h2>Portail de l'assureur (simulation)</h2><p>Cet écran imite le site de l'assureur. En vrai, l'extension AssurPay lit la page au moment où la collaboratrice clique sur Valider, puis envoie tout à AssurPay et prévient l'administrateur.</p></div></div>
+  <div class="portal-layout">
+    <div class="browser">
+      <div class="bbar"><div class="dots"><i></i><i></i><i></i></div><div class="url">${ic('lock',12)}<span>portail-assureur.exemple/agent/attestations/nouvelle</span></div><button class="extbtn" data-a="ext-popup" title="Extension AssurPay Capture">${ic('puzzle',14)}AssurPay<span class="led"></span></button></div>
+      <div class="phead"><div><b>Espace Agent</b><br><span>Émission d'attestation automobile</span></div><span class="sim">Simulation</span></div>
+      <div class="pbody">${inner}</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <section class="card"><div class="card-h"><h2>Captures du jour</h2><span class="pill neutral">${mine.length}</span></div><div class="card-b list">${mine.length?mine.map(c=>`<div class="li"><div class="grow"><a href="#" data-a="open-contract" data-id="${c.id}" style="color:inherit;font-weight:600">${esc(fullName(clientOf(c.clientId)))}</a><small>${ftime(c.createdAt)} · police ${c.police} · ${dh(c.du)}</small></div>${c.status==='a_completer'?`<button class="btn sm primary" data-a="complement" data-id="${c.id}">Compléter</button>`:payPill(c)}</div>`).join(''):'<p class="muted">Aucune validation aujourd\'hui sur ce poste.</p>'}</div></section>
+    </div>
+  </div>`;
+};
+
+/* ================= drawers ================= */
+function openDrawer(type,id){DR={type,id};renderDrawer()}
+function closeDrawer(){DR=null;renderDrawer()}
+function renderDrawer(){const r=$('#drawer-root');if(!DR||!ME()){r.innerHTML='';return}const html=DR.type==='contract'?drawerContract(DR.id):drawerClient(DR.id);if(!html){DR=null;r.innerHTML='';return}r.innerHTML=`<div class="dr-ov" data-a="dr-ov"></div><aside class="drawer" role="dialog" aria-modal="true" aria-label="Détail">${html}</aside>`}
+function drawerContract(id){
+  const c=K(id);if(!c)return '';
+  const cl=clientOf(c.clientId),col=userOf(c.collabId),paid=paidOf(c),reste=resteOf(c),ec=ecartOf(c),pays=paysOf(c),lp=lastPaper(c),me=ME();
+  const hist=S.audit.filter(a=>a.contractId===c.id).sort((a,b)=>b.date.localeCompare(a.date));
+  const acts=[];
+  if(c.status==='a_completer'&&(isAdmin()||c.collabId===me.id))acts.push(`<button class="btn primary" data-a="complement" data-id="${c.id}">Compléter l'encaissement</button>`);
+  if(c.status==='complet'&&reste>0&&can('paiements'))acts.push(`<button class="btn primary" data-a="pay" data-id="${c.id}">${ic('cash')}Encaisser un paiement</button>`);
+  if(c.status==='complet'&&c.type==='provisoire'&&lp&&lp.type==='provisoire'){
+    if(can('credit')&&reste>0)acts.push(`<button class="btn" data-a="paper" data-id="${c.id}">${ic('file')}Nouveau papier provisoire</button>`);
+    if(can('definitif'))acts.push(`<button class="btn" data-a="definitif" data-id="${c.id}" ${reste>0?`disabled title="Reste ${dh(reste)} à payer avant le définitif"`:''}>${ic('check')}Remettre le définitif</button>`);
+  }
+  if(reste>0&&can('rappels'))acts.push(`<button class="btn" data-a="wa" data-id="${c.id}">${ic('msg')}Rappel WhatsApp</button>`);
+  if(isAdmin()&&c.status!=='annule'){acts.push(`<button class="btn" data-a="edit" data-id="${c.id}">${ic('edit')}Modifier</button>`);acts.push(`<button class="btn danger" data-a="cancel" data-id="${c.id}">Annuler l'assurance</button>`)}
+  if(!isAdmin())acts.push(`<button class="btn ghost" data-a="report" data-id="${c.id}">${ic('flag')}Signaler une erreur</button>`);
+  const papers=c.status==='complet'&&c.type!=='comptant'?`<section><h3>Papiers remis</h3><div class="papers" style="margin-top:10px">${c.papiers.map(p=>`<div class="paper ${p.type==='definitif'?'def':''}"><b>${p.type==='definitif'?'Définitif':'Provisoire'}</b> · du ${fdate(p.debut)} au ${fdate(p.fin)}<small>Remis par ${esc(userOf(p.remisPar).name)} le ${fdate(p.remisLe)}</small></div>`).join('')}${c.type==='provisoire'&&lp&&lp.type==='provisoire'?`<div class="paper next"><b class="muted">Définitif</b><small>${reste>0?`Remis quand le reste (${dh(reste)}) sera payé.`:'Le crédit est soldé : le définitif peut être remis.'}</small></div>`:''}</div></section>`:'';
+  return `<div class="dr-head"><div><div class="eyebrow">${esc(c.categorie)} · ${c.duree} mois</div><h2>${esc(fullName(cl))}</h2><div class="pills">${payPill(c)}${paperState(c)&&reste>0?`<span class="pill ${paperState(c).lvl}">${esc(paperState(c).text)}</span>`:''}<span class="pill neutral">${ic('puzzle')}Capté sur le portail</span></div></div><button class="icon-btn" data-a="close-drawer" aria-label="Fermer">${ic('x')}</button></div>
+  <div class="dr-body">
+    <dl class="kv"><div><dt>N° attestation</dt><dd class="mono">${c.attestation}</dd></div><div><dt>N° police</dt><dd class="mono">${c.police}</dd></div><div><dt>N° quittance</dt><dd class="mono">${c.quittance}</dd></div><div><dt>Validée le</dt><dd>${fdate(c.createdAt)} à ${ftime(c.createdAt)}</dd></div><div><dt>Par</dt><dd>${esc(col.name)}</dd></div><div><dt>Poste</dt><dd>${esc(c.poste)}</dd></div><div><dt>Période</dt><dd>${fdate(c.debut)} → ${fdate(c.fin)}</dd></div><div><dt>Client</dt><dd><a href="#" data-a="open-client" data-id="${cl.id}">${esc(cl.tel)} · ${esc(cl.cin)}</a></dd></div></dl>
+    ${c.status==='annule'?`<div class="err">Annulée : ${esc(c.cancelReason||'')}</div>`:''}
+    <section><h3>Montants</h3><div class="money" style="margin-top:10px"><div><span>Dû à l'assureur</span><b>${dh(c.du)}</b></div><div><span>Pris au client</span><b>${c.status==='complet'?dh(c.pris):'—'}</b></div><div><span>Écart</span><b class="${ecCls(ec)}">${c.status==='complet'?sdh(ec):'—'}</b></div>${c.type!=='comptant'&&c.status==='complet'?`<div><span>Payé</span><b>${dh(paid)}</b></div><div><span>Reste</span><b class="${reste>0?'neg':'pos'}">${reste>0?dh(reste):'Soldé'}</b></div>`:''}</div>
+    ${c.status==='complet'?`<p class="muted" style="margin:8px 0 0;font-size:13px">${typeLabel(c.type)}${c.observation?` · ${esc(c.observation)}`:''}</p>`:''}</section>
+    ${papers}
+    <section><h3>Paiements</h3>${pays.length?`<div class="list" style="margin-top:4px">${pays.map((p,i)=>`<div class="li"><div class="grow"><b class="tnum">${dh(p.montant)}</b><small>${fdate(p.date)} à ${ftime(p.date)} · reçu par ${esc(userOf(p.userId).name)}</small></div><span class="muted tnum" style="font-size:12px">cumul ${dh(sum(pays.slice(0,i+1).map(x=>x.montant)))}</span></div>`).join('')}</div>`:'<p class="muted" style="margin:6px 0 0">Aucun paiement enregistré.</p>'}</section>
+    <section><h3>Historique</h3><div class="list" style="margin-top:4px">${hist.map(feedItem).join('')}</div></section>
+  </div>
+  <div class="dr-foot">${acts.join('')}</div>`;
+}
+function drawerClient(id){
+  const cl=S.clients.find(c=>c.id===id);if(!cl)return '';
+  const cs=S.contracts.filter(c=>c.clientId===id).sort((a,b)=>b.createdAt.localeCompare(a.createdAt)),valid=cs.filter(c=>c.status!=='annule'),reste=sum(valid.map(resteOf));
+  const open=valid.find(c=>resteOf(c)>0);
+  return `<div class="dr-head"><div><div class="eyebrow">Fiche client</div><h2>${esc(fullName(cl))}</h2><div class="pills">${reste?`<span class="pill bad">Doit ${dh(reste)}</span>`:'<span class="pill good">Aucune dette</span>'}</div></div><button class="icon-btn" data-a="close-drawer" aria-label="Fermer">${ic('x')}</button></div>
+  <div class="dr-body">
+    <dl class="kv"><div><dt>CIN</dt><dd class="mono">${esc(cl.cin)}</dd></div><div><dt>Téléphone</dt><dd>${esc(cl.tel)}</dd></div><div><dt>Immatriculation</dt><dd class="mono">${esc(cl.immat)}</dd></div><div><dt>Véhicule</dt><dd>${esc(cl.vehicule)}</dd></div></dl>
+    <div class="money"><div><span>Assurances</span><b>${valid.length}</b></div><div><span>Total pris</span><b>${dh(sum(valid.filter(c=>c.status==='complet').map(c=>c.pris)))}</b></div><div><span>Reste dû</span><b class="${reste?'neg':''}">${dh(reste)}</b></div></div>
+    <section><h3>Assurances</h3><div class="list" style="margin-top:4px">${cs.map(c=>`<div class="li"><div class="grow"><a href="#" data-a="open-contract" data-id="${c.id}" style="color:inherit;font-weight:600">${esc(c.categorie)} · ${c.duree} mois</a><small>${fdate(c.createdAt)} · police ${c.police} · quittance ${c.quittance} · ${dh(c.du)}</small></div>${payPill(c)}</div>`).join('')}</div></section>
+  </div>
+  <div class="dr-foot">${can('clients')?`<button class="btn" data-a="client-edit" data-id="${cl.id}">${ic('edit')}Modifier la fiche</button>`:''}${open&&can('rappels')?`<button class="btn" data-a="wa" data-id="${open.id}">${ic('msg')}Rappel WhatsApp</button>`:''}</div>`;
+}
+
+/* ================= modals ================= */
+function openModal(html,cls=''){$('#modal-root').innerHTML=`<div class="overlay" data-a="ov"><div class="modal ${cls}" role="dialog" aria-modal="true">${html}</div></div>`;const f=$('#modal-root input:not([readonly]):not([type=radio]),#modal-root textarea,#modal-root select');if(f)setTimeout(()=>f.focus(),30)}
+function closeModal(){$('#modal-root').innerHTML=''}
+const mhead=t=>`<div class="m-head"><h2>${t}</h2><button class="icon-btn" data-a="close-modal" aria-label="Fermer">${ic('x')}</button></div>`;
+function showErr(id,msg){const e=$('#'+id);if(e){e.textContent=msg;e.hidden=!msg}}
+function toast(msg,kind=''){const t=document.createElement('div');t.className='toast '+kind;t.innerHTML=(kind==='ext'?ic('puzzle'):ic('check'))+`<span>${esc(msg)}</span>`;$('#toasts').appendChild(t);setTimeout(()=>t.remove(),4200)}
+function refresh(){save();renderMain();renderDrawer();const sh=$('#shell');if(sh&&isAdmin()){const c=sh.querySelector('.nav .count'),n=alerts().length;if(c)c.textContent=n}}
+
+function openComplement(id,fromCapture){
+  const c=K(id),cl=clientOf(c.clientId),u=ME(),canE=can('ecart'),canC=can('credit'),max=isAdmin()?null:u.maxEcart;
+  openModal(`<div class="ext-head"><span class="ext-logo">${ic('puzzle',16)}</span><div><b>AssurPay Capture</b><span>Extension gérée par votre organisation</span></div><button class="icon-btn" data-a="close-modal" aria-label="Fermer">${ic('x')}</button></div>
+  ${fromCapture?`<div class="ext-ok">${ic('check',16)}Validation enregistrée et envoyée à l'administrateur</div>`:''}
+  <form id="f-complement" data-id="${c.id}" class="m-body" style="padding-top:14px" novalidate>
+    <div class="capt"><b>${esc(fullName(cl))}</b><span class="big tnum">${dh(c.du)}</span><span class="muted" style="font-size:12.5px">${esc(c.categorie)} · police <span class="mono">${c.police}</span> · quittance <span class="mono">${c.quittance}</span></span></div>
+    <div class="grid2"><div class="field"><label for="cp-pris">Montant pris au client (DH)</label><input id="cp-pris" type="number" inputmode="numeric" min="0" step="1" value="${c.du}" ${canE?'':'readonly'}><small>${canE?'Les deux montants sont gardés : le dû et le pris.':'Votre compte ne permet pas de changer le montant.'}</small></div><div class="field"><span class="lbl">Écart</span><div class="ecart-live" id="cp-ecart">0 DH</div></div></div>
+    <fieldset class="seg"><legend>Le client paie</legend><div class="seg-opts">
+      <label><input type="radio" name="cp-type" value="comptant" checked>Comptant<small>tout, maintenant</small></label>
+      <label><input type="radio" name="cp-type" value="normal" ${canC?'':'disabled'}>Crédit normal<small>définitif remis</small></label>
+      <label><input type="radio" name="cp-type" value="provisoire" ${canC?'':'disabled'}>Crédit provisoire<small>papier provisoire</small></label></div>
+      ${canC?'':'<small class="faint" style="font-size:11.5px">Crédit non autorisé pour votre compte.</small>'}</fieldset>
+    <div id="cp-credit" class="grid2" hidden><div class="field"><label for="cp-verse">Versé aujourd'hui (DH)</label><input id="cp-verse" type="number" min="0" step="1" inputmode="numeric" value="0"></div><div class="field" id="cp-jours-w"><label for="cp-jours">Papier provisoire (jours)</label><input id="cp-jours" type="number" min="1" max="90" value="${S.settings.dureeProvisoire}"></div></div>
+    <div class="grid2"><div class="field"><label for="cp-obs">Observation</label><input id="cp-obs" placeholder="Ex. : passera vendredi" value="${esc(c.observation)}"></div></div>
+    <div class="hint" id="cp-sum"></div>
+    <div class="err" id="cp-err" hidden></div>
+    <div class="m-foot">${fromCapture?'<button type="button" class="btn" data-a="later">Compléter plus tard</button>':''}<button class="btn primary" type="submit">Enregistrer</button></div>
+  </form>`,'ext');
+  updateComplementUI();
+}
+function updateComplementUI(){
+  const f=$('#f-complement');if(!f)return;const c=K(f.dataset.id);
+  const pris=Math.round(+$('#cp-pris').value||0),ec=pris-c.du,type=f.querySelector('input[name=cp-type]:checked').value,verse=Math.round(+$('#cp-verse').value||0);
+  const e=$('#cp-ecart');e.className='ecart-live '+ecCls(ec);e.innerHTML=sdh(ec)+`<small>${ec<0?'perte pour l\'agence':ec>0?'gain':'montant exact'}</small>`;
+  $('#cp-credit').hidden=type==='comptant';$('#cp-jours-w').hidden=type!=='provisoire';
+  $('#cp-sum').textContent=type==='comptant'?`Le client paie ${dh(pris)} maintenant.`:`Le client verse ${dh(verse)} maintenant et doit encore ${dh(Math.max(0,pris-verse))}.${type==='provisoire'?` Il reçoit un papier provisoire de ${+$('#cp-jours').value||0} jours ; le définitif quand tout est payé.`:' Il reçoit le définitif maintenant.'}`;
+}
+function openPay(id){const c=K(id),r=resteOf(c);openModal(`${mhead('Encaisser un paiement')}<form id="f-pay" data-id="${id}" class="m-body" novalidate><p class="muted">${esc(fullName(clientOf(c.clientId)))} · police <span class="mono">${c.police}</span> · reste <b>${dh(r)}</b></p><div class="grid2"><div class="field"><label for="py-m">Montant reçu (DH)</label><input id="py-m" type="number" min="1" max="${r}" step="1" inputmode="numeric" value="${r}"></div></div><div class="err" id="py-err" hidden></div><div class="m-foot"><button type="button" class="btn" data-a="close-modal">Annuler</button><button class="btn primary" type="submit">Enregistrer le paiement</button></div></form>`)}
+function openPaper(id){const c=K(id);openModal(`${mhead('Nouveau papier provisoire')}<form id="f-paper" data-id="${id}" class="m-body" novalidate><p class="muted">${esc(fullName(clientOf(c.clientId)))} · reste ${dh(resteOf(c))}. Le papier commence aujourd'hui.</p><div class="field"><label for="pp-j">Durée (jours)</label><input id="pp-j" type="number" min="1" max="90" value="${S.settings.dureeProvisoire}"></div><div class="err" id="pp-err" hidden></div><div class="m-foot"><button type="button" class="btn" data-a="close-modal">Annuler</button><button class="btn primary" type="submit">Remettre le papier</button></div></form>`)}
+function openDefinitif(id){const c=K(id);openModal(`${mhead('Remettre le définitif')}<form id="f-def" data-id="${id}" class="m-body"><p>Le crédit de <b>${esc(fullName(clientOf(c.clientId)))}</b> est soldé. Le papier définitif couvre jusqu'au <b>${fdate(c.fin)}</b>.</p><div class="m-foot"><button type="button" class="btn" data-a="close-modal">Annuler</button><button class="btn primary" type="submit">Confirmer la remise</button></div></form>`)}
+const waNum=t=>{const d=String(t).replace(/\D/g,'');return d.startsWith('0')?'212'+d.slice(1):d};
+function waText(c,lang){const cl=clientOf(c.clientId),r=resteOf(c),lp=lastPaper(c),exp=c.type==='provisoire'&&lp&&lp.type==='provisoire'?lp.fin:null,ag=S.settings.agence;
+  return lang==='ar'?`السلام عليكم ${cl.prenom}، معاك ${ag}. باقي عليك ${nf.format(r)} درهم ديال التأمين (البوليس ${c.police}).${exp?` الورقة المؤقتة كتسالي نهار ${fdate(exp)}.`:''} مرحبا بيك فالوكالة. شكرا.`
+  :`Bonjour ${cl.prenom} ${cl.nom}, ici ${ag}. Il reste ${dh(r)} à régler sur votre assurance (police ${c.police}).${exp?` Votre attestation provisoire expire le ${fdate(exp)}.`:''} Merci de passer à l'agence. Bonne journée.`}
+function openWA(id){const c=K(id),cl=clientOf(c.clientId),msg=waText(c,'fr');openModal(`${mhead('Rappel WhatsApp')}<form id="f-wa" data-id="${id}" class="m-body"><p class="muted">À ${esc(fullName(cl))} · <span class="tnum">${esc(cl.tel)}</span></p><div class="field"><label for="wa-lang">Langue</label><select id="wa-lang"><option value="fr">Français</option><option value="ar">Darija</option></select></div><div class="field"><label for="wa-msg">Message</label><textarea id="wa-msg" rows="5">${esc(msg)}</textarea></div><p class="faint" style="font-size:12px">WhatsApp s'ouvre dans un nouvel onglet avec ce message. Vérifiez qu'il est bien parti.</p><div class="m-foot"><button type="button" class="btn" data-a="wa-copy">${ic('copy')}Copier</button><a class="btn primary" id="wa-link" target="_blank" rel="noopener" href="https://wa.me/${waNum(cl.tel)}?text=${encodeURIComponent(msg)}" data-a="wa-log" data-id="${id}">${ic('msg')}Ouvrir WhatsApp</a></div></form>`)}
+function updateWA(){const f=$('#f-wa');if(!f)return;const c=K(f.dataset.id);$('#wa-link').href=`https://wa.me/${waNum(clientOf(c.clientId).tel)}?text=${encodeURIComponent($('#wa-msg').value)}`}
+function openEdit(id){const c=K(id);openModal(`${mhead('Modifier l\'assurance')}<form id="f-edit" data-id="${id}" class="m-body" novalidate><p class="hint">Chaque changement est gardé dans l'historique avec l'ancienne valeur.</p><div class="grid2"><div class="field"><label for="ed-cat">Catégorie</label><select id="ed-cat">${S.settings.categories.map(x=>`<option ${x===c.categorie?'selected':''}>${esc(x)}</option>`).join('')}</select></div><div class="field"><label for="ed-att">N° attestation</label><input id="ed-att" value="${c.attestation}"></div><div class="field"><label for="ed-pol">N° police</label><input id="ed-pol" value="${c.police}"></div><div class="field"><label for="ed-q">N° quittance</label><input id="ed-q" value="${c.quittance}"></div><div class="field"><label for="ed-du">Montant dû</label><input id="ed-du" type="number" value="${c.du}"></div><div class="field"><label for="ed-pris">Montant pris</label><input id="ed-pris" type="number" value="${c.pris}" ${c.status==='complet'?'':'disabled'}></div></div><div class="field"><label for="ed-obs">Observation</label><input id="ed-obs" value="${esc(c.observation)}"></div><div class="field"><label for="ed-why">Raison de la modification</label><input id="ed-why" required placeholder="Ex. : erreur de saisie de la quittance"></div><div class="err" id="ed-err" hidden></div><div class="m-foot"><button type="button" class="btn" data-a="close-modal">Annuler</button><button class="btn primary" type="submit">Enregistrer</button></div></form>`)}
+function openCancel(id){const c=K(id);openModal(`${mhead('Annuler l\'assurance')}<form id="f-cancel" data-id="${id}" class="m-body" novalidate><p>${esc(fullName(clientOf(c.clientId)))} · police <span class="mono">${c.police}</span>. La ligne reste visible dans le registre, barrée.</p><div class="field"><label for="cn-why">Raison</label><input id="cn-why" required placeholder="Ex. : attestation annulée sur le portail"></div><div class="err" id="cn-err" hidden></div><div class="m-foot"><button type="button" class="btn" data-a="close-modal">Retour</button><button class="btn primary" type="submit" style="background:var(--bad);border-color:var(--bad);color:#fff">Annuler l'assurance</button></div></form>`)}
+function openReport(id){const c=K(id);openModal(`${mhead('Signaler une erreur')}<form id="f-report" data-id="${id}" class="m-body" novalidate><p class="muted">Vous ne pouvez pas modifier une assurance. Décrivez l'erreur : l'administrateur la corrigera.</p><div class="field"><label for="rp-t">Ce qui est faux</label><textarea id="rp-t" rows="3" placeholder="Ex. : le client a payé 850 et non 853"></textarea></div><div class="err" id="rp-err" hidden></div><div class="m-foot"><button type="button" class="btn" data-a="close-modal">Annuler</button><button class="btn primary" type="submit">Envoyer à l'administrateur</button></div></form>`)}
+function openClientEdit(id){const cl=S.clients.find(c=>c.id===id);openModal(`${mhead('Modifier la fiche client')}<form id="f-client" data-id="${id}" class="m-body" novalidate><div class="grid2">${[['nom','Nom'],['prenom','Prénom'],['cin','CIN'],['tel','Téléphone'],['immat','Immatriculation'],['vehicule','Véhicule']].map(([k,l])=>`<div class="field"><label for="ce-${k}">${l}</label><input id="ce-${k}" value="${esc(cl[k])}"></div>`).join('')}</div><div class="m-foot"><button type="button" class="btn" data-a="close-modal">Annuler</button><button class="btn primary" type="submit">Enregistrer</button></div></form>`)}
+
+/* ================= actions ================= */
+const ACT={
+  nav:id=>{route=id;closeDrawer();bellOpen=false;$('#shell')?.classList.remove('nav-open');render();window.scrollTo(0,0)},
+  'nav-open':()=>$('#shell').classList.add('nav-open'),
+  'nav-close':()=>$('#shell').classList.remove('nav-open'),
+  logout:()=>{audit('connexion','Déconnexion');save();sess.set(null);route='dashboard';DR=null;bellOpen=false;portal={step:'form',lastId:null};closeModal();render()},
+  'demo-fill':id=>{const u=S.users.find(x=>x.login===id);$('#lg-user').value=u.login;$('#lg-pwd').value=u.pwd;$('#f-login button[type=submit]').focus()},
+  bell:()=>{bellOpen=!bellOpen;updateBell()},
+  'notif-all':()=>{S.notifs.forEach(n=>n.read=true);save();updateBell()},
+  notif:id=>{const n=S.notifs.find(x=>x.id===id);n.read=true;save();bellOpen=false;updateBell();if(n.contractId&&K(n.contractId))openDrawer('contract',n.contractId);},
+  'open-contract':id=>{hideResults();openDrawer('contract',id)},
+  'open-client':id=>openDrawer('client',id),
+  'close-drawer':closeDrawer,
+  'dr-ov':closeDrawer,
+  'close-modal':closeModal,
+  ov:(id,t,e)=>{if(e.target===t)closeModal()},
+  'caisse-day':id=>{F.caisse.day=id;ACT.nav('caisse')},
+  'cred-tab':id=>{F.cred.tab=id;renderMain()},
+  complement:id=>openComplement(id,false),
+  later:()=>{closeModal();toast(`À compléter : l'administrateur sera alerté après ${S.settings.delaiComplement} h sans encaissement.`,'ext')},
+  pay:id=>openPay(id),paper:id=>openPaper(id),definitif:id=>openDefinitif(id),wa:id=>openWA(id),edit:id=>openEdit(id),cancel:id=>openCancel(id),report:id=>openReport(id),'client-edit':id=>openClientEdit(id),
+  'wa-copy':()=>{const t=$('#wa-msg'),ok=()=>toast('Message copié');try{navigator.clipboard.writeText(t.value).then(ok,()=>{t.select();toast('Sélectionné : faites Ctrl+C')})}catch(e){t.select();toast('Sélectionné : faites Ctrl+C')}},
+  'wa-log':id=>{const c=K(id);audit('rappel',`Rappel WhatsApp préparé · ${fullName(clientOf(c.clientId))} · reste ${dh(resteOf(c))}`,{contractId:id});save();closeModal();renderDrawer()},
+  'portal-new':()=>{portal={step:'form',lastId:null};renderMain()},
+  'ext-popup':()=>{const u=ME(),n=S.contracts.filter(c=>c.collabId===u.id&&dayKey(c.createdAt)===todayKey()).length;openModal(`<div class="ext-head"><span class="ext-logo">${ic('puzzle',16)}</span><div><b>AssurPay Capture</b><span>Version 1.0</span></div><button class="icon-btn" data-a="close-modal" aria-label="Fermer">${ic('x')}</button></div><div class="m-body" style="padding-top:14px"><div style="display:flex;gap:6px;flex-wrap:wrap"><span class="pill good">${ic('check')}Active</span><span class="pill acc">${ic('lock')}Gérée par votre organisation</span></div><dl class="kv"><div><dt>Connectée en tant que</dt><dd>${esc(u.name)}</dd></div><div><dt>Poste</dt><dd>${esc(u.ext.poste)}</dd></div><div><dt>Captures aujourd'hui</dt><dd>${n}</dd></div><div><dt>Dernier signal</dt><dd>${ago(u.ext.lastSeen)}</dd></div></dl><p class="muted" style="font-size:13px">Chaque clic sur « Valider » dans le portail de l'assureur est enregistré dans AssurPay et envoyé à l'administrateur.</p></div>`,'ext')},
+  'ext-try':()=>{const u=ME();audit('tentative',`Tentative de désactivation de l'extension sur ${u.ext.poste} · bloquée`);notify('alert','tentative',`${u.name} a essayé de désactiver l'extension AssurPay sur ${u.ext.poste}. Le blocage a fonctionné.`);save();
+    openModal(`${mhead('chrome://extensions')}<div class="m-body"><div class="chrome-card"><span class="ext-logo">${ic('puzzle',16)}</span><div class="grow"><b>AssurPay Capture</b> <span class="faint">1.0</span><div class="org">${ic('building',14)}Installée par votre organisation</div><div style="display:flex;gap:8px;margin-top:10px"><button class="btn sm" disabled>Supprimer</button><button class="btn sm" disabled>Détails</button></div></div><input type="checkbox" class="sw" checked disabled aria-label="Activée (verrouillé)"></div><p>Cette extension est gérée par votre organisation. Vous ne pouvez pas la désactiver ni la supprimer.</p><p class="hint">${isAdmin()?'Tentative enregistrée dans le journal.':"L'administrateur a été informé de cette tentative."}</p><div class="m-foot"><button class="btn primary" data-a="close-modal">Compris</button></div></div>`)},
+  'sim-silence':id=>{const u=userOf(id);u.ext.lastSeen=new Date(Date.now()-45*6e4).toISOString();S.notifs.push({id:uid('n'),date:new Date().toISOString(),level:'warn',type:'extension',text:`Aucun signal de l'extension sur ${u.ext.poste} (${u.name}) depuis 45 min.`,read:false});audit('extension',`Silence simulé de l'extension sur ${u.ext.poste}`);refresh();toast('Silence simulé : alerte créée')},
+  'add-user':()=>openModal(`${mhead('Ajouter un collaborateur')}<form id="f-user" class="m-body" novalidate><div class="grid2"><div class="field"><label for="nu-n">Nom complet</label><input id="nu-n" required></div><div class="field"><label for="nu-l">Identifiant</label><input id="nu-l" required autocomplete="off"></div><div class="field"><label for="nu-p">Mot de passe</label><input id="nu-p" required autocomplete="off"></div><div class="field"><label for="nu-po">Poste (PC)</label><input id="nu-po" value="PC-BUREAU-3"></div></div><p class="hint">Droits de départ : encaisser les paiements, rappels WhatsApp, écart de ± 5 DH. Vous pourrez les changer ensuite.</p><div class="err" id="nu-err" hidden></div><div class="m-foot"><button type="button" class="btn" data-a="close-modal">Annuler</button><button class="btn primary" type="submit">Ajouter</button></div></form>`),
+  'add-versement':()=>openModal(`${mhead("Versement à l'assureur")}<form id="f-vers" class="m-body" novalidate><div class="grid2"><div class="field"><label for="vs-d">Date</label><input id="vs-d" type="date" value="${todayKey()}" max="${todayKey()}"></div><div class="field"><label for="vs-m">Montant (DH)</label><input id="vs-m" type="number" min="1" step="1"></div><div class="field"><label for="vs-r">Référence</label><input id="vs-r" placeholder="VIR-…"></div><div class="field"><label for="vs-mo">Moyen</label><select id="vs-mo"><option>virement</option><option>chèque</option><option>espèces</option></select></div></div><div class="err" id="vs-err" hidden></div><div class="m-foot"><button type="button" class="btn" data-a="close-modal">Annuler</button><button class="btn primary" type="submit">Enregistrer</button></div></form>`),
+  'cat-rm':id=>{const s=S.settings;if(s.categories.length<=1){toast('Gardez au moins une catégorie');return}const n=s.categories.splice(+id,1)[0];audit('parametre',`Catégorie retirée : ${n}`);refresh()},
+  'cat-add':()=>{const v=$('#cat-new').value.trim();if(!v)return;if(S.settings.categories.some(c=>norm(c)===norm(v))){toast('Cette catégorie existe déjà');return}S.settings.categories.push(v);audit('parametre',`Catégorie ajoutée : ${v}`);refresh();toast('Catégorie ajoutée')},
+  reset:()=>openModal(`${mhead('Réinitialiser la démo ?')}<div class="m-body"><p>Toutes les saisies faites dans ce navigateur seront remplacées par les données de départ.</p><div class="m-foot"><button class="btn" data-a="close-modal">Annuler</button><button class="btn primary" data-a="reset-go" style="background:var(--bad);border-color:var(--bad);color:#fff">Réinitialiser</button></div></div>`),
+  'axa-paid':m=>{S.axaPaid=S.axaPaid||{};if(S.axaPaid[m]){delete S.axaPaid[m];audit('versement',`${monthLabel(m)} : paiement AXA annulé`);toast('Paiement annulé')}else{S.axaPaid[m]=new Date().toISOString();audit('versement',`${monthLabel(m)} payé à l'assureur`);toast(`${monthLabel(m)} marqué comme payé`)}refresh()},
+  'reset-go':()=>{const me=sess.get();S=seed();save();closeModal();DR=null;if(!S.users.some(u=>u.id===me))sess.set(null);render();toast('Démo réinitialisée')}
+};
+
+/* ================= forms ================= */
+const val=id=>($('#'+id)?.value??'').trim();
+const SUB={
+  'f-login':()=>{const u=S.users.find(x=>x.login.toLowerCase()===val('lg-user').toLowerCase());if(!u||u.pwd!==$('#lg-pwd').value){showErr('lg-err','Identifiant ou mot de passe incorrect.');return}if(!u.active){showErr('lg-err','Ce compte est désactivé. Contactez l\'administrateur.');return}sess.set(u.id);if(u.role==='collab')u.ext.lastSeen=new Date().toISOString();audit('connexion',`Connexion · ${u.ext.poste}`);save();route=u.role==='admin'?'dashboard':'portal';render()},
+  'f-portal':()=>{
+    const sel=val('pt-client'),nom=val('pt-nom').toUpperCase(),prenom=val('pt-prenom'),cin=val('pt-cin').toUpperCase();
+    if(!nom||!prenom||!cin){showErr('pt-err','Nom, prénom et CIN sont obligatoires.');return}
+    const btn=$('#pt-submit');btn.disabled=true;btn.textContent='Validation…';
+    setTimeout(()=>{
+      const u=ME();let cl=sel?S.clients.find(c=>c.id===sel):S.clients.find(c=>norm(c.cin)===norm(cin));
+      if(!cl){cl={id:uid('c'),nom,prenom,cin,tel:val('pt-tel'),immat:val('pt-immat')||'—',vehicule:val('pt-veh')};S.clients.push(cl)}
+      const cat=val('pt-cat'),m=+val('pt-duree'),now=new Date().toISOString();
+      const c={id:uid('k'),createdAt:now,clientId:cl.id,categorie:cat,duree:m,debut:now,fin:addMonths(now,m),attestation:String(S.counters.att++),police:String(S.counters.pol++),quittance:String(Math.floor(Math.random()*9000)+1000)+LETTERS[Math.floor(Math.random()*23)]+LETTERS[Math.floor(Math.random()*23)],du:primeOf(cat,m),pris:primeOf(cat,m),collabId:u.id,poste:u.ext.poste,status:'a_completer',type:'comptant',papiers:[],observation:'',source:'capture'};
+      S.contracts.push(c);
+      audit('validation',`Validation sur le portail · ${fullName(cl)} · ${cat} · police ${c.police} · ${dh(c.du)}`,{contractId:c.id});
+      notify('info','validation',`${u.name} a validé une assurance · ${cat} · ${fullName(cl)} · police ${c.police} · ${dh(c.du)}`,c.id);
+      u.ext.lastSeen=now;portal={step:'done',lastId:c.id};save();renderMain();
+      toast('AssurPay a capté la validation','ext');
+      setTimeout(()=>openComplement(c.id,true),450);
+    },650);
+  },
+  'f-complement':f=>{
+    const c=K(f.dataset.id),u=ME(),pris=Math.round(+val('cp-pris')),type=f.querySelector('input[name=cp-type]:checked').value,verse=Math.round(+val('cp-verse')||0),mode='espèces',jours=Math.round(+val('cp-jours')),ec=pris-c.du;
+    if(!(pris>0))return showErr('cp-err','Indiquez le montant pris au client.');
+    if(!isAdmin()&&ec!==0&&!can('ecart'))return showErr('cp-err','Votre compte ne permet pas de changer le montant.');
+    if(!isAdmin()&&u.maxEcart!=null&&Math.abs(ec)>u.maxEcart)return showErr('cp-err',`Écart de ${sdh(ec)} : la limite de votre compte est ± ${u.maxEcart} DH. Demandez à l'administrateur.`);
+    if(type!=='comptant'&&!can('credit'))return showErr('cp-err','Crédit non autorisé pour votre compte.');
+    if(type!=='comptant'&&(verse<0||verse>=pris))return showErr('cp-err','Le versement doit être inférieur au montant pris. Si le client paie tout, choisissez Comptant.');
+    if(type==='provisoire'&&!(jours>=1&&jours<=90))return showErr('cp-err','La durée du papier provisoire doit être entre 1 et 90 jours.');
+    const now=new Date().toISOString(),cl=clientOf(c.clientId);
+    Object.assign(c,{pris,type,status:'complet',observation:val('cp-obs')});
+    c.papiers=type==='provisoire'?[{id:uid('pp'),type:'provisoire',debut:now,fin:addDays(now,jours-1),remisLe:now,remisPar:u.id}]:[{id:uid('pp'),type:'definitif',debut:c.debut,fin:c.fin,remisLe:now,remisPar:u.id}];
+    const amount=type==='comptant'?pris:verse;
+    if(amount>0)S.payments.push({id:uid('p'),contractId:c.id,date:now,montant:amount,mode,userId:u.id});
+    audit('complement',`Encaissement complété · ${fullName(cl)} · ${typeLabel(type)} · pris ${dh(pris)}${ec?` (écart ${sdh(ec)})`:''}${type!=='comptant'?` · versé ${dh(verse)}, reste ${dh(pris-verse)}`:''}`,{contractId:c.id});
+    if(type!=='comptant')notify('warn','credit',`${u.name} a accordé un ${typeLabel(type).toLowerCase()} à ${fullName(cl)} · reste ${dh(pris-verse)}`,c.id);
+    else if(ec)notify('info','ecart',`${u.name} a pris ${dh(pris)} au lieu de ${dh(c.du)} (${sdh(ec)}) · ${fullName(cl)}`,c.id);
+    closeModal();refresh();toast('Encaissement enregistré');
+  },
+  'f-pay':f=>{const c=K(f.dataset.id),r=resteOf(c),m=Math.round(+val('py-m'));if(!(m>0))return showErr('py-err','Indiquez un montant.');if(m>r)return showErr('py-err',`Le montant dépasse le reste (${dh(r)}).`);
+    S.payments.push({id:uid('p'),contractId:c.id,date:new Date().toISOString(),montant:m,mode:'espèces',userId:ME().id});
+    const nr=r-m,nm=fullName(clientOf(c.clientId));audit('paiement',`Paiement de ${dh(m)} · ${nm} · police ${c.police} · reste ${dh(nr)}`,{contractId:c.id});notify('info','paiement',`${ME().name} a encaissé ${dh(m)} de ${nm} · reste ${dh(nr)}`,c.id);
+    closeModal();refresh();toast(nr?`Paiement enregistré · reste ${dh(nr)}`:(c.type==='provisoire'?'Crédit soldé : le définitif peut être remis':'Crédit soldé'))},
+  'f-paper':f=>{const c=K(f.dataset.id),j=Math.round(+val('pp-j'));if(!(j>=1&&j<=90))return showErr('pp-err','Entre 1 et 90 jours.');const now=new Date().toISOString(),p={id:uid('pp'),type:'provisoire',debut:now,fin:addDays(now,j-1),remisLe:now,remisPar:ME().id};c.papiers.push(p);
+    audit('papier',`Papier provisoire remis · ${fullName(clientOf(c.clientId))} · jusqu'au ${fdate(p.fin)}`,{contractId:c.id});notify('info','papier',`${ME().name} a remis un papier provisoire à ${fullName(clientOf(c.clientId))} · reste ${dh(resteOf(c))}`,c.id);closeModal();refresh();toast('Papier provisoire enregistré')},
+  'f-def':f=>{const c=K(f.dataset.id);if(resteOf(c)>0){closeModal();return}const now=new Date().toISOString();c.papiers.push({id:uid('pp'),type:'definitif',debut:now,fin:c.fin,remisLe:now,remisPar:ME().id});audit('definitif',`Papier définitif remis · ${fullName(clientOf(c.clientId))}`,{contractId:c.id});notify('info','definitif',`${ME().name} a remis le définitif à ${fullName(clientOf(c.clientId))}`,c.id);closeModal();refresh();toast('Définitif remis')},
+  'f-edit':f=>{const c=K(f.dataset.id),why=val('ed-why');const fields=[['categorie','Catégorie',val('ed-cat')],['attestation','Attestation',val('ed-att')],['police','Police',val('ed-pol')],['quittance','Quittance',val('ed-q').toUpperCase()],['du','Montant dû',Math.round(+val('ed-du'))],['observation','Observation',val('ed-obs')]];if(c.status==='complet')fields.push(['pris','Montant pris',Math.round(+val('ed-pris'))]);
+    const diff=fields.filter(([k,,v])=>String(c[k])!==String(v)).map(([k,l,v])=>({f:k,label:l,from:c[k]===''?'(vide)':String(c[k]),to:v===''?'(vide)':String(v)}));
+    if(!diff.length)return showErr('ed-err','Aucun changement.');if(!why)return showErr('ed-err','Indiquez la raison de la modification.');if(!(c.du>0)||fields.some(([k,,v])=>(k==='du'||k==='pris')&&!(v>0)))return showErr('ed-err','Les montants doivent être positifs.');
+    fields.forEach(([k,,v])=>c[k]=v);audit('modification',`Modification · ${fullName(clientOf(c.clientId))} · police ${c.police} · ${why}`,{contractId:c.id,diff});closeModal();refresh();toast('Assurance modifiée')},
+  'f-cancel':f=>{const c=K(f.dataset.id),why=val('cn-why');if(!why)return showErr('cn-err','Indiquez la raison.');c.status='annule';c.cancelReason=why;audit('annulation',`Annulation · ${fullName(clientOf(c.clientId))} · police ${c.police} · ${why}`,{contractId:c.id});closeModal();refresh();toast('Assurance annulée')},
+  'f-report':f=>{const c=K(f.dataset.id),t=val('rp-t');if(!t)return showErr('rp-err','Décrivez l\'erreur.');audit('signalement',`Erreur signalée · police ${c.police} · ${t}`,{contractId:c.id});notify('warn','signalement',`${ME().name} signale une erreur · ${fullName(clientOf(c.clientId))} · police ${c.police} : ${t}`,c.id);closeModal();refresh();toast("Envoyé à l'administrateur")},
+  'f-client':f=>{const cl=S.clients.find(c=>c.id===f.dataset.id),labels={nom:'Nom',prenom:'Prénom',cin:'CIN',tel:'Téléphone',immat:'Immatriculation',vehicule:'Véhicule'};const diff=[];Object.keys(labels).forEach(k=>{const v=val('ce-'+k);if(v!==cl[k]){diff.push({f:k,label:labels[k],from:cl[k]||'(vide)',to:v||'(vide)'});cl[k]=v}});if(diff.length)audit('client',`Fiche client modifiée · ${fullName(cl)}`,{diff});closeModal();refresh();toast(diff.length?'Fiche mise à jour':'Aucun changement')},
+  'f-close':()=>{const u=ME(),tk=todayKey(),ex=expected(tk,u.id),e=$('#cl-esp').value;if(e===''){$('#cl-live').textContent='Saisissez les espèces comptées.';return}const esp=Math.round(+e),chq=Math.round(+val('cl-chq')||0),ecart=esp+chq-(ex.esp+ex.chq),note=val('cl-note');
+    if(ecart&&!note){$('#cl-live').className='err';$('#cl-live').textContent=`Écart de ${sdh(ecart)} : ajoutez une note pour expliquer.`;return}
+    const now=new Date().toISOString();S.closes.push({id:uid('cl'),day:tk,userId:u.id,attEsp:ex.esp,attChq:ex.chq,attVir:ex.vir,compteEsp:esp,compteChq:chq,ecart,note,closedAt:now});
+    audit('cloture',`Caisse du ${fdate(now)} clôturée · compté ${dh(esp+chq)}${ecart?` · écart ${sdh(ecart)}`:''}`);notify(ecart?'alert':'info','cloture',`${u.name} a clôturé sa caisse · ${ecart?`écart ${sdh(ecart)} : ${note}`:'aucun écart'}`);refresh();toast('Caisse clôturée')},
+  'f-user':()=>{const n=val('nu-n'),l=val('nu-l').toLowerCase(),p=val('nu-p');if(!n||!l||!p)return showErr('nu-err','Tous les champs sont obligatoires.');if(S.users.some(u=>u.login===l))return showErr('nu-err','Cet identifiant existe déjà.');
+    S.users.push({id:uid('u'),name:n,role:'collab',login:l,pwd:p,active:true,color:COLORS[S.users.length%COLORS.length],maxEcart:5,perms:{voirTout:false,credit:false,ecart:true,paiements:true,definitif:false,rappels:true,clients:false,stats:false,assureur:false},ext:{poste:val('nu-po')||'PC',lastSeen:new Date().toISOString()}});audit('permission',`Collaborateur ajouté : ${n}`);closeModal();refresh();toast('Collaborateur ajouté')},
+  'f-vers':()=>{const m=Math.round(+val('vs-m')),d=val('vs-d');if(!(m>0)||!d)return showErr('vs-err','Indiquez la date et le montant.');const date=new Date(d+'T'+(d===todayKey()?ftime(new Date().toISOString()):'11:00')).toISOString();S.versements.push({id:uid('v'),date,montant:m,ref:val('vs-r')||'—',mode:val('vs-mo')});audit('versement',`Versement à l'assureur · ${dh(m)}`);closeModal();refresh();toast('Versement enregistré')},
+  'f-settings':()=>{const s=S.settings,dp=Math.round(+val('st-dp')),dc=Math.round(+val('st-dc'));if(!(dp>=1&&dp<=90)||!(dc>=1&&dc<=48)){toast('Vérifiez les durées (1 à 90 jours, 1 à 48 heures)');return}
+    Object.assign(s,{agence:val('st-ag')||s.agence,ville:val('st-vi'),assureur:val('st-as')||s.assureur,telAdmin:val('st-tel'),dureeProvisoire:dp,delaiComplement:dc,notifMode:val('st-mode'),notif:{app:$('#st-n-app').checked,whatsapp:$('#st-n-wa').checked,email:$('#st-n-em').checked}});audit('parametre','Paramètres modifiés');save();render();toast('Paramètres enregistrés')}
+};
+
+/* ================= global search ================= */
+function hideResults(){const r=$('#gres');if(r)r.hidden=true}
+function showResults(q){
+  const r=$('#gres');if(!r)return;q=norm(q);if(q.length<2){r.hidden=true;return}
+  const cs=scopeContracts().filter(c=>matchContract(c,q)).sort((a,b)=>{const ex=x=>norm(x.quittance)===q||norm(x.police)===q?0:1;return ex(a)-ex(b)||b.createdAt.localeCompare(a.createdAt)}).slice(0,8);
+  r.innerHTML=cs.length?cs.map(c=>{const cl=clientOf(c.clientId);return `<button class="gr-item" data-a="open-contract" data-id="${c.id}"><span class="grow"><b>${esc(fullName(cl))}</b><span class="sub"><span class="mono">police ${c.police} · quittance ${c.quittance}</span> · ${fdate(c.createdAt)}</span></span>${paidPill(c)}</button>`}).join(''):'<div class="gr-empty">Aucun résultat.</div>';
+  r.hidden=false;
+}
+
+/* ================= live updates ================= */
+function onStorage(e){
+  if(e.key!==LS||!e.newValue)return;
+  const before=S?S.notifs.filter(n=>!n.read).length:0;
+  try{const d=JSON.parse(e.newValue);if(d&&d.ver===1)S=d;else return}catch(x){return}
+  if(!ME()){if(!$('#f-login'))render();return}
+  const after=S.notifs.filter(n=>!n.read).length;
+  if(isAdmin()&&after>before){const n=[...S.notifs].sort((a,b)=>b.date.localeCompare(a.date))[0];if(n)toast(n.text)}
+  const ae=document.activeElement,busy=ae&&$('#main')?.contains(ae)&&/INPUT|TEXTAREA|SELECT/.test(ae.tagName);
+  if(!busy)renderMain();else updateBell();
+  if(!$('#modal-root').innerHTML)renderDrawer();
+  const c=$('#shell .nav .count');if(c)c.textContent=alerts().length;
+}
+setInterval(()=>{const u=ME();if(u&&u.role==='collab'){try{const raw=store.get(LS);if(raw){const d=JSON.parse(raw);if(d&&d.ver===1)S=d}}catch(e){}const me=ME();if(!me)return;me.ext.lastSeen=new Date().toISOString();save()}},20000);
+
+/* ================= events ================= */
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.bell-wrap')&&bellOpen){bellOpen=false;updateBell()}
+  if(!e.target.closest('.gsearch'))hideResults();
+  const t=e.target.closest('[data-a]');if(!t)return;
+  if(t.dataset.a==='ov'){if(e.target===t)closeModal();return}
+  const fn=ACT[t.dataset.a];if(!fn)return;
+  if(t.tagName!=='A'||!t.target)e.preventDefault();
+  fn(t.dataset.id,t,e);
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){if($('#modal-root').innerHTML)closeModal();else if(DR)closeDrawer();else if(bellOpen){bellOpen=false;updateBell()}else hideResults()}
+  if(e.key==='Enter'&&e.target.matches('tr[data-a]'))e.target.click();
+  if(e.key==='Enter'&&e.target.id==='cat-new'){e.preventDefault();ACT['cat-add']()}
+});
+document.addEventListener('submit',e=>{e.preventDefault();const fn=SUB[e.target.id];if(fn)fn(e.target)});
+let tq;
+document.addEventListener('input',e=>{const t=e.target;
+  if(t.dataset.fq){clearTimeout(tq);tq=setTimeout(()=>{const [a,b]=t.dataset.fq.split('.');F[a][b]=t.value;renderMain()},180);return}
+  if(t.id==='gsearch')showResults(t.value);
+  if(t.closest('#f-complement'))updateComplementUI();
+  if(t.id==='wa-msg')updateWA();
+  if(t.id==='cl-esp'||t.id==='cl-chq'){const ex=expected(todayKey(),ME().id),esp=$('#cl-esp').value;const l=$('#cl-live');l.className='hint';if(esp===''){l.textContent='Saisissez les espèces comptées.';return}const d=Math.round(+esp)+Math.round(+$('#cl-chq').value||0)-(ex.esp+ex.chq);l.innerHTML=d?`Écart de <b class="${ecCls(d)}">${sdh(d)}</b> par rapport à l'attendu. Une note sera demandée.`:'Le compte est juste.'}
+});
+document.addEventListener('change',e=>{const t=e.target;
+  if(t.dataset.f){const [a,b]=t.dataset.f.split('.');F[a][b]=t.value;renderMain();return}
+  if(t.dataset.perm){const u=userOf(t.dataset.user),k=t.dataset.perm;u.perms[k]=t.checked;audit('permission',`${u.name} · ${PERMS.find(p=>p[0]===k)[1]} : ${t.checked?'autorisé':'retiré'}`);refresh();toast('Droit mis à jour');return}
+  if(t.dataset.max){const u=userOf(t.dataset.max),v=Math.max(0,Math.min(100,Math.round(+t.value||0)));if(v!==u.maxEcart){audit('permission',`${u.name} · écart maximum : ${u.maxEcart} → ${v} DH`);u.maxEcart=v;refresh();toast('Limite mise à jour')}return}
+  if(t.dataset.uact){const u=userOf(t.dataset.uact);u.active=t.checked;audit('permission',`Compte de ${u.name} ${t.checked?'réactivé':'désactivé'}`);refresh();toast(t.checked?'Compte réactivé':'Compte désactivé');return}
+  if(t.id==='pt-client'){const c=S.clients.find(x=>x.id===t.value);['nom','prenom','cin','tel','immat','vehicule'].forEach(k=>{const el=$('#pt-'+(k==='vehicule'?'veh':k));if(el)el.value=c?(c[k]==='—'?'':c[k]):''});showErr('pt-err','')}
+  if(t.id==='pt-cat'||t.id==='pt-duree')$('#pt-prime').textContent=dh(primeOf(val('pt-cat'),+val('pt-duree')));
+  if(t.closest('#f-complement'))updateComplementUI();
+  if(t.id==='wa-lang'){const c=K($('#f-wa').dataset.id);$('#wa-msg').value=waText(c,t.value);$('#wa-msg').dir=t.value==='ar'?'rtl':'ltr';updateWA()}
+});
+window.addEventListener('storage',onStorage);
+
+load();
+if(sess.get()&&!ME())sess.set(null);
+if(ME())route=isAdmin()?'dashboard':'portal';
+render();
+})();
+</script>
+
+</body>
+</html>
