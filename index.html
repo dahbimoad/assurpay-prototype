@@ -320,6 +320,125 @@ input.sw:disabled{opacity:.5;cursor:not-allowed}
   .ucards{grid-template-columns:minmax(0,1fr)}
 }
 @media (max-width:520px){.seg-opts{grid-template-columns:minmax(0,1fr)}.demo-tag{display:none}}
+
+/* ---------- review notes (layer over the prototype, not part of the product) ---------- */
+:root{--nt:#F2B01E;--nt-ink:#2B1D00;--nt-soft:color-mix(in srgb,#F2B01E 15%,var(--surface));--nt-line:color-mix(in srgb,#F2B01E 50%,var(--line))}
+.nt-tab{position:fixed;right:0;top:50%;z-index:88;transform:translate(4px,-50%);display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 10px 12px 7px;border:0;border-radius:10px 0 0 10px;background:var(--nt);color:var(--nt-ink);font:600 12.5px var(--sans);cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.12),0 8px 24px rgba(0,0,0,.14);transition:transform .18s ease}
+.nt-tab:hover,.nt-tab:focus-visible{transform:translate(0,-50%)}
+.nt-tab.hide{transform:translate(110%,-50%)}
+.nt-tab .lbl{writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:.03em}
+.nt-tab b{min-width:19px;height:19px;padding:0 5px;border-radius:999px;background:var(--nt-ink);color:var(--nt);font:700 11px/19px var(--sans);text-align:center}
+.nt-logo{width:28px;height:28px;border-radius:8px;background:var(--nt);color:var(--nt-ink);display:grid;place-items:center;flex:none}
+.nt-panel{position:fixed;top:0;right:0;bottom:0;z-index:90;width:min(400px,100vw);display:flex;flex-direction:column;background:var(--surface);border-left:1px solid var(--line);box-shadow:-10px 0 40px rgba(0,0,0,.16);transform:translateX(102%);visibility:hidden;transition:transform .24s cubic-bezier(.2,.8,.2,1),visibility 0s linear .24s;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.nt-panel.open{transform:none;visibility:visible;transition:transform .24s cubic-bezier(.2,.8,.2,1)}
+.nt-panel::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--nt)}
+.nt-head{padding:14px 16px 0;display:flex;flex-direction:column;gap:8px;border-bottom:1px solid var(--line)}
+.nt-title{display:flex;align-items:center;gap:10px}
+.nt-title h2{font-size:18px;font-weight:600;flex:1}
+.nt-where{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px}
+.pill.nt-scr{background:var(--nt-soft);color:var(--text);box-shadow:inset 0 0 0 1px var(--nt-line);max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.pill.nt-scr b{font-weight:600}
+.nt-head .tabs{border-bottom:0;margin:0 -4px}
+.nt-compose{display:flex;flex-direction:column;gap:8px;padding:12px 16px;background:var(--surface-2);border-bottom:1px solid var(--line)}
+.nt-compose textarea{width:100%;min-height:74px;line-height:1.45}
+.nt-compose textarea:focus,.nt-edit:focus,.nt-set input:focus{border-color:var(--nt);outline:2px solid color-mix(in srgb,var(--nt) 45%,transparent);outline-offset:0}
+.nt-crow{display:flex;gap:8px;align-items:center}
+.nt-crow input{flex:1;height:32px;font-size:13px}
+.nt-kbd{font:500 11px var(--mono);color:var(--faint);white-space:nowrap}
+.btn.nt-go{background:var(--nt);border-color:var(--nt);color:var(--nt-ink);font-weight:600}
+.btn.nt-go:hover{filter:brightness(1.05);border-color:var(--nt)}
+.nt-pinrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--faint);min-width:0}
+.nt-chip{display:inline-flex;align-items:center;gap:5px;max-width:100%;background:var(--nt-soft);border:1px solid var(--nt-line);color:var(--text);border-radius:999px;padding:2px 3px 2px 9px;font-size:12.5px}
+.nt-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nt-chip button{border:0;background:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;cursor:pointer;color:var(--muted);flex:none}
+.nt-chip button:hover{background:var(--surface);color:var(--text)}
+.nt-body{flex:1;overflow:auto;padding:12px 16px 20px;display:flex;flex-direction:column;gap:8px;overscroll-behavior:contain}
+.nt-note{display:grid;grid-template-columns:26px minmax(0,1fr);gap:10px;padding:10px 12px 6px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);transition:border-color .15s,box-shadow .15s}
+.nt-note:hover,.nt-note.hot{border-color:var(--nt-line);box-shadow:0 0 0 3px color-mix(in srgb,var(--nt) 16%,transparent)}
+.nt-note.flash{animation:ntflash 1.5s ease-out}
+@keyframes ntflash{0%,35%{background:var(--nt-soft);border-color:var(--nt)}}
+.nt-num{width:24px;height:24px;border-radius:50%;border:1px dashed var(--line-2);background:var(--surface-2);color:var(--muted);font:700 11.5px var(--sans);display:grid;place-items:center;padding:0;cursor:default}
+.nt-note.pinned .nt-num{border:2px solid var(--surface);background:var(--nt);color:var(--nt-ink);cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.nt-note.done .nt-num{border:0;background:var(--good-soft);color:var(--good);box-shadow:none}
+.nt-num svg.i{width:13px;height:13px}
+.nt-text{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.45}
+.nt-note.done .nt-text{color:var(--faint);text-decoration:line-through;text-decoration-color:color-mix(in srgb,var(--faint) 60%,transparent)}
+.nt-meta{font-size:11.5px;color:var(--faint);margin-top:4px;display:flex;flex-wrap:wrap;gap:0 10px;align-items:center}
+.nt-meta b{color:var(--muted);font-weight:600}
+.nt-meta span{display:inline-flex;align-items:center;gap:3px;min-width:0}
+.nt-meta svg.i{width:11px;height:11px}
+.nt-acts{display:flex;flex-wrap:wrap;gap:2px;margin:6px 0 2px -6px}
+.nt-act{display:inline-flex;align-items:center;gap:4px;border:0;background:none;padding:3px 6px;border-radius:6px;font:500 12px var(--sans);color:var(--muted);cursor:pointer}
+.nt-act:hover{background:var(--surface-2);color:var(--text)}
+.nt-act.ok:hover{background:var(--good-soft);color:var(--good)}
+.nt-act.del{margin-left:auto}
+.nt-act.del:hover{background:var(--bad-soft);color:var(--bad)}
+.nt-act svg.i{width:14px;height:14px}
+.nt-edit{width:100%;min-height:70px;line-height:1.45}
+.nt-sep{font:600 11px var(--sans);text-transform:uppercase;letter-spacing:.07em;color:var(--faint);margin:10px 0 0;display:flex;align-items:center;gap:8px}
+.nt-sep::after{content:"";flex:1;height:1px;background:var(--line)}
+.nt-alldone{display:flex;gap:6px;align-items:center;color:var(--good);font-weight:500;margin:2px 0}
+.nt-empty{text-align:center;color:var(--muted);padding:28px 12px;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:13.5px}
+.nt-empty b{color:var(--text);font:600 16px var(--cond)}
+.nt-empty .nt-logo{width:44px;height:44px;border-radius:12px;margin-bottom:4px}
+.nt-sum{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.nt-sum div{background:var(--surface-2);padding:8px 10px}
+.nt-sum b{display:block;font:600 20px/1.2 var(--cond);font-variant-numeric:tabular-nums}
+.nt-sum span{font-size:11.5px;color:var(--faint)}
+.nt-group{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.nt-ghead{display:flex;align-items:center;gap:8px}
+.nt-ghead>div{flex:1;min-width:0}
+.nt-ghead b{display:block;font:600 15px var(--cond)}
+.nt-ghead small{color:var(--faint);font-size:12px}
+.nt-foot{display:flex;align-items:center;gap:4px;padding:8px 10px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+.nt-status{flex:1;min-width:0;display:flex;align-items:center;gap:8px;border:0;background:none;text-align:left;cursor:pointer;padding:7px 8px;border-radius:7px;font:inherit;color:inherit}
+.nt-status:hover{background:var(--surface-2)}
+.nt-status span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nt-dot{width:8px;height:8px;border-radius:50%;flex:none;background:var(--faint)}
+.nt-dot.ok{background:var(--good);box-shadow:0 0 0 3px var(--good-soft)}
+.nt-dot.local{background:var(--warn);box-shadow:0 0 0 3px var(--warn-soft)}
+.nt-dot.err{background:var(--bad);box-shadow:0 0 0 3px var(--bad-soft)}
+.nt-dot.sync{background:var(--nt);animation:ntpulse 1s ease-in-out infinite}
+@keyframes ntpulse{50%{opacity:.25}}
+.nt-set{display:flex;flex-direction:column;gap:10px;font-size:13.5px}
+.nt-set h3{font:600 11.5px var(--sans);text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-top:8px}
+.nt-set p{margin:0;color:var(--muted)}
+.nt-set p b{color:var(--text)}
+.nt-set code{font:12px var(--mono);background:var(--surface-2);padding:1px 5px;border-radius:4px;color:var(--ink)}
+.nt-set ol{margin:0;padding-left:20px;color:var(--muted);display:flex;flex-direction:column;gap:4px;font-size:13px}
+.nt-set a:not(.btn){color:var(--accent)}
+.nt-conn{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;background:var(--good-soft);color:var(--good);font-weight:500}
+.nt-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.nt-row input{flex:1;min-width:160px}
+.nt-set .perm{border-top:0;padding:4px 0}
+.nt-pins{position:fixed;inset:0;pointer-events:none;z-index:86}
+.nt-pin{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;border:2px solid #fff;background:var(--nt);color:var(--nt-ink);font:700 12px/22px var(--sans);text-align:center;pointer-events:auto;cursor:pointer;padding:0;box-shadow:0 2px 8px rgba(0,0,0,.35);transition:transform .15s}
+.nt-pin::after{content:"";position:absolute;inset:-7px;border-radius:50%;border:2px solid var(--nt);opacity:0;animation:ntring 2.6s ease-out infinite;pointer-events:none}
+@keyframes ntring{0%{transform:scale(.55);opacity:.85}70%,100%{transform:scale(1.3);opacity:0}}
+.nt-pin:hover,.nt-pin.hot{transform:scale(1.18);z-index:2}
+.nt-pin.draft{background:var(--nt-ink);color:var(--nt);border-color:var(--nt)}
+.nt-pin.drop{animation:ntdrop .45s cubic-bezier(.3,1.6,.5,1)}
+@keyframes ntdrop{from{transform:translateY(-20px) scale(.4);opacity:0}}
+.nt-tip{position:absolute;top:50%;left:calc(100% + 10px);transform:translateY(-50%);width:max-content;max-width:260px;background:var(--text);color:var(--bg);font:400 12.5px/1.4 var(--sans);text-align:left;padding:8px 10px;border-radius:8px;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .12s;white-space:pre-wrap;overflow-wrap:anywhere}
+.nt-pin.left .nt-tip{left:auto;right:calc(100% + 10px)}
+.nt-pin:hover .nt-tip,.nt-pin.hot .nt-tip{opacity:1}
+.nt-tip small{display:block;opacity:.7;margin-top:3px;font-size:11px}
+.nt-hl{position:fixed;z-index:87;pointer-events:none;border:2px solid var(--nt);border-radius:7px;background:color-mix(in srgb,var(--nt) 12%,transparent);box-shadow:0 0 0 4px color-mix(in srgb,var(--nt) 22%,transparent);transition:left .08s,top .08s,width .08s,height .08s}
+.nt-hl.flash{animation:nthl 1.6s ease-out forwards}
+@keyframes nthl{0%,25%{opacity:1}100%{opacity:0}}
+.nt-banner{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:95;display:flex;align-items:center;gap:10px;background:var(--nt-ink);color:#FFE7A8;padding:6px 6px 6px 14px;border-radius:999px;box-shadow:0 8px 30px rgba(0,0,0,.3);font:500 13.5px var(--sans);max-width:calc(100vw - 24px);width:max-content}
+.nt-banner .btn{background:transparent;color:#FFE7A8;border-color:rgba(255,231,168,.35);border-radius:999px}
+.nt-banner kbd{font:11px var(--mono);opacity:.7}
+body.nt-placing,body.nt-placing *{cursor:crosshair!important}
+.nt-coach{position:fixed;right:54px;top:50%;transform:translateY(-50%);z-index:89;width:min(290px,calc(100vw - 80px));background:var(--surface);border:1px solid var(--nt-line);border-radius:12px;box-shadow:var(--shadow);padding:14px;display:flex;flex-direction:column;gap:8px;font-size:13.5px;animation:tin .25s ease-out}
+.nt-coach::after{content:"";position:absolute;right:-7px;top:50%;width:12px;height:12px;margin-top:-6px;background:var(--surface);border-right:1px solid var(--nt-line);border-top:1px solid var(--nt-line);transform:rotate(45deg)}
+.nt-coach b{font:600 16px var(--cond)}
+.nt-coach .eyebrow{color:var(--warn)}
+.nt-toast button{margin-left:4px;border:0;background:none;color:var(--nt);font:600 13px var(--sans);cursor:pointer;padding:2px 4px;text-decoration:underline}
+.nt-shake{animation:ntshake .35s}
+@keyframes ntshake{20%,60%{transform:translateX(-4px)}40%,80%{transform:translateX(4px)}}
+@media (max-width:600px){.nt-kbd{display:none}.nt-tab{padding:10px 8px 10px 6px}}
+@media print{.nt-ui{display:none!important}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 
@@ -405,7 +524,11 @@ flag:'<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22v-7
 edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
 copy:'<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
 clock:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
-arrow:'<path d="M5 12h14M12 5l7 7-7 7"/>'
+arrow:'<path d="M5 12h14M12 5l7 7-7 7"/>',
+note:'<path d="M14 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v9z"/><path d="M14 21v-5a2 2 0 0 1 2-2h5M7 8h10M7 12h6"/>',
+pin:'<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>',
+trash:'<path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
+download:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>'
 };
 const ic=(n,s)=>`<svg class="i" viewBox="0 0 24 24" aria-hidden="true"${s?` style="width:${s}px;height:${s}px"`:''}>${IC[n]||''}</svg>`;
 const LOGO=`<svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#3DB39D"/><path d="M9 10.5h14M9 15.5h9M9 20.5h5" stroke="#06231D" stroke-width="2.3" stroke-linecap="round"/><path d="M17.5 21l2.7 2.7L25.5 18" stroke="#06231D" stroke-width="2.3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
@@ -1171,10 +1294,362 @@ document.addEventListener('change',e=>{const t=e.target;
 });
 window.addEventListener('storage',onStorage);
 
+/* ================= review notes =================
+   Notes de revue par écran, épinglables sur un élément. Gardées tout de suite dans
+   ce navigateur, puis écrites dans notes.json du dépôt GitHub (lecture publique,
+   écriture avec un jeton) : on les retrouve sur tous les appareils. Indépendant des
+   données de démo : « Réinitialiser la démo » n'y touche pas. */
+const NT=(()=>{
+  const LSK='assurpay-review-notes',CFK='assurpay-review-cfg';
+  const GH=(()=>{const m=location.hostname.match(/^([^.]+)\.github\.io$/i),seg=location.pathname.split('/').filter(Boolean)[0];return m&&seg&&!/\.html?$/.test(seg)?{owner:m[1],repo:seg}:{owner:'dahbimoad',repo:'assurpay-prototype'}})();
+  GH.branch='main';GH.path='notes.json';
+  const API=`https://api.github.com/repos/${GH.owner}/${GH.repo}`;
+  const rd=k=>{try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}};
+  const wr=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+  const D=Object.assign({notes:[],base:{},sha:null,lastSync:null},rd(LSK)||{});
+  const C=Object.assign({token:'',login:'',author:'',pins:true,open:false,coach:false},rd(CFK)||{});
+  const saveD=()=>wr(LSK,{notes:D.notes,base:D.base,sha:D.sha,lastSync:D.lastSync});
+  const saveC=()=>wr(CFK,C);
+  let tab='here',view='list',editing=null,draft={pin:null,screen:null},placing=null,cur=null,hot=null,lastAction='',sync={state:'idle',msg:''},lastTry=0,busy=false,again=false,timer=0,rafId=0,hlT=0;
+  const now=()=>new Date().toISOString();
+  const live=()=>D.notes.filter(n=>n&&n.id&&!n.deleted&&typeof n.text==='string');
+  const byDate=(a,b)=>(a.createdAt||'').localeCompare(b.createdAt||'');
+  const ofScreen=k=>live().filter(n=>n.screen===k).sort(byDate);
+  const pending=()=>D.notes.filter(n=>D.base[n.id]!==n.updatedAt).length;
+  const sig=l=>l.map(n=>n.id+'@'+n.updatedAt).sort().join('|');
+  const who=()=>!ME()?'':isAdmin()?'Administrateur':'Collaboratrice';
+  const plural=(n,w)=>n+' '+w+(n>1?'s':'');
+  const b64enc=s=>{const b=new TextEncoder().encode(s);let x='';for(let i=0;i<b.length;i+=0x8000)x+=String.fromCharCode.apply(null,b.subarray(i,i+0x8000));return btoa(x)};
+  const b64dec=s=>new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\s/g,'')),c=>c.charCodeAt(0)));
+  const hdr=(tok=C.token)=>Object.assign({Accept:'application/vnd.github+json'},tok?{Authorization:'Bearer '+tok}:{});
+  function merge(a,b){const m=new Map();[...b,...a].forEach(n=>{if(!n||!n.id)return;const o=m.get(n.id);if(!o||(n.updatedAt||'')>(o.updatedAt||'')||(n.updatedAt===o.updatedAt&&n.deleted&&!o.deleted))m.set(n.id,n)});return[...m.values()]}
+
+  /* ---- which screen is showing ---- */
+  const MODALS={'f-complement':"Compléter l'encaissement",'f-pay':'Encaisser un paiement','f-paper':'Nouveau papier provisoire','f-def':'Remettre le définitif','f-wa':'Rappel WhatsApp','f-edit':"Modifier l'assurance",'f-cancel':"Annuler l'assurance",'f-report':'Signaler une erreur','f-client':'Modifier la fiche client','f-user':'Ajouter un collaborateur','f-vers':"Versement à l'assureur"};
+  function screen(){
+    if(!ME())return{key:'login',label:'Connexion',kind:'Page'};
+    const m=$('#modal-root .modal');
+    if(m){const f=m.querySelector('form[id]'),t=(m.querySelector('.m-head h2,.ext-head b')?.textContent||'Fenêtre').trim(),k=f?f.id:'m-'+norm(t).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');return{key:'modal:'+k,label:MODALS[k]||t,kind:'Fenêtre'}}
+    if(DR)return{key:'drawer:'+DR.type,label:DR.type==='contract'?'Fiche assurance':'Fiche client',kind:'Volet',ref:DR.id};
+    return{key:'page:'+route,label:routeTitle(route),kind:'Page'};
+  }
+
+  /* ---- anchoring a note to an element ---- */
+  const ROOTS='#app,#drawer-root,#modal-root';
+  function selOf(el){const parts=[];while(el&&el.nodeType===1){if(el.id){parts.unshift('#'+CSS.escape(el.id));break}const p=el.parentElement;if(!p)break;let s=el.tagName.toLowerCase();const same=[...p.children].filter(c=>c.tagName===el.tagName);if(same.length>1)s+=`:nth-of-type(${same.indexOf(el)+1})`;parts.unshift(s);el=p}return parts.join(' > ')}
+  const find=sel=>{try{return sel?document.querySelector(sel):null}catch(e){return null}};
+  function describe(el){const lab=el.labels&&el.labels[0]?el.labels[0].innerText:'';let t=(el.getAttribute('aria-label')||lab||el.getAttribute('placeholder')||el.innerText||el.value||el.getAttribute('title')||'').replace(/\s+/g,' ').trim();if(!t)t=({table:'tableau',tr:'ligne',td:'cellule',input:'champ',select:'liste',svg:'icône',section:'bloc'})[el.tagName.toLowerCase()]||'élément';return t.length>42?t.slice(0,40)+'…':t}
+  function pickable(el){if(!el||!el.closest||el.closest('.nt-ui'))return null;if(el instanceof SVGElement)el=el.closest('svg').parentElement||el;if(!el.closest(ROOTS)||el.matches(ROOTS+',.overlay,.dr-ov,#shell,.main-wrap,.login'))return null;return el}
+  function visibleAt(el,x,y){
+    if(x<0||y<0||x>innerWidth||y>innerHeight)return false;
+    for(let a=el.parentElement;a&&a!==document.body;a=a.parentElement){const cs=getComputedStyle(a);if(cs.overflowX!=='visible'||cs.overflowY!=='visible'){const r=a.getBoundingClientRect();if(x<r.left-2||x>r.right+2||y<r.top-2||y>r.bottom+2)return false}}
+    const main=$('#main'),top=$('.top');if(main&&top&&main.contains(el)&&y<top.getBoundingClientRect().bottom)return false;
+    return true;
+  }
+
+  function checkScreen(){const s=screen();if(s.key===cur)return[s,false];cur=s.key;editing=null;if(draft.screen&&draft.screen!==cur)draft={pin:null,screen:null};return[s,true]}
+
+  /* ---- pins & highlight ---- */
+  const pinEls=new Map();
+  const req=()=>{if(!rafId)rafId=requestAnimationFrame(layout)};
+  function layout(){
+    rafId=0;if(checkScreen()[1]){renderPanel();updateTab()}
+    const layer=$('#nt-pins');if(!layer)return;
+    const navOpen=innerWidth<=900&&$('#shell')?.classList.contains('nav-open'),want=[];
+    if(C.pins&&!placing&&!navOpen){ofScreen(cur).forEach((n,i)=>{if(n.pin&&!n.done)want.push({id:n.id,num:i+1,n,pin:n.pin})});if(draft.pin&&draft.screen===cur)want.push({id:'draft',num:'+',pin:draft.pin})}
+    const ids=new Set(want.map(w=>w.id));
+    pinEls.forEach((p,id)=>{if(!ids.has(id)){p.remove();pinEls.delete(id)}});
+    want.forEach(w=>{
+      const el=find(w.pin.sel),r=el&&el.getBoundingClientRect(),x=r?r.left+w.pin.ox*r.width:0,y=r?r.top+w.pin.oy*r.height:0,ok=r&&(r.width||r.height)&&visibleAt(el,x,y);
+      let p=pinEls.get(w.id);
+      if(!ok){if(p)p.hidden=true;return}
+      if(!p){p=document.createElement('button');p.type='button';p.className='nt-pin drop';p.dataset.n='pin';p.dataset.id=w.id;layer.appendChild(p);pinEls.set(w.id,p);setTimeout(()=>p.classList.remove('drop'),500)}
+      const sg=w.num+'|'+(w.n?w.n.updatedAt:'draft');
+      if(p.dataset.sig!==sg){p.dataset.sig=sg;p.classList.toggle('draft',!w.n);p.setAttribute('aria-label',w.n?`Note ${w.num}`:'Nouvelle note');
+        p.innerHTML=`${w.num}<span class="nt-tip">${w.n?esc(w.n.text.length>160?w.n.text.slice(0,158)+'…':w.n.text)+(w.n.author?`<small>${esc(w.n.author)} · ${ago(w.n.createdAt)}</small>`:''):'Nouvelle note : écrivez-la dans le panneau'}</span>`}
+      p.hidden=false;p.classList.toggle('left',x>innerWidth-300);p.style.left=x+'px';p.style.top=y+'px';
+    });
+  }
+  function hl(el,flash){const h=$('#nt-hl');if(!h)return;clearTimeout(hlT);h.classList.remove('flash');if(!el){h.hidden=true;return}const r=el.getBoundingClientRect();Object.assign(h.style,{left:r.left-4+'px',top:r.top-4+'px',width:r.width+8+'px',height:r.height+8+'px'});h.hidden=false;if(flash){void h.offsetWidth;h.classList.add('flash');hlT=setTimeout(()=>{h.hidden=true;h.classList.remove('flash')},1600)}}
+  function setHot(id){
+    if(hot===id)return;hot=id;
+    document.querySelectorAll('.nt-note.hot,.nt-pin.hot').forEach(x=>x.classList.remove('hot'));
+    if(!id||id==='draft'){if(!placing)hl(null);return}
+    $(`#nt-body [data-nid="${id}"]`)?.classList.add('hot');pinEls.get(id)?.classList.add('hot');
+    const n=D.notes.find(x=>x.id===id),el=n&&n.pin&&!n.done&&n.screen===cur?find(n.pin.sel):null;hl(el&&el.getBoundingClientRect().width?el:null);
+  }
+  function locate(id){
+    const n=D.notes.find(x=>x.id===id);if(!n||!n.pin)return;
+    const el=find(n.pin.sel);if(!el||!el.getBoundingClientRect().width){ntToast("Élément introuvable sur cet écran : il a peut-être changé. Vous pouvez ré-épingler la note.");return}
+    if(innerWidth<700)close(true);
+    el.scrollIntoView({block:'center',behavior:'smooth'});
+    setTimeout(()=>{hl(el,true);const p=pinEls.get(id);if(p){p.classList.add('hot');setTimeout(()=>p.classList.remove('hot'),1600)}},380);
+  }
+
+  /* ---- placing mode ---- */
+  function startPlace(forId){placing={forId:forId||null};close(true);setHot(null);document.body.classList.add('nt-placing');$('#nt-banner').hidden=false;updateTab();req()}
+  function stopPlace(){placing=null;document.body.classList.remove('nt-placing');$('#nt-banner').hidden=true;hl(null);updateTab();req()}
+  function onPickMove(e){if(placing)hl(pickable(e.target))}
+  function onPickDown(e){if(!placing||e.target.closest('.nt-ui,#toasts'))return;e.preventDefault();e.stopImmediatePropagation()}
+  function onPickClick(e){
+    if(!placing||e.target.closest('.nt-ui,#toasts'))return;
+    e.preventDefault();e.stopImmediatePropagation();
+    const el=pickable(e.target);if(!el)return;
+    const r=el.getBoundingClientRect(),cl=v=>+Math.max(0,Math.min(1,v)).toFixed(3),pin={sel:selOf(el),ox:cl((e.clientX-r.left)/(r.width||1)),oy:cl((e.clientY-r.top)/(r.height||1)),label:describe(el)};
+    const forId=placing.forId;stopPlace();
+    if(forId){change(forId,n=>{n.pin=pin},'note épinglée');open(true);flash(forId)}
+    else{draft={pin,screen:cur};open()}
+  }
+
+  /* ---- changes ---- */
+  function commit(action){lastAction=action;saveD();renderPanel();updateTab();req();schedule()}
+  function change(id,fn,action){const n=D.notes.find(x=>x.id===id);if(!n)return;fn(n);n.updatedAt=now();commit(action)}
+  function addNote(){
+    const ta=$('#nt-text'),text=ta.value.trim();
+    if(!text){ta.focus();ta.classList.remove('nt-shake');void ta.offsetWidth;ta.classList.add('nt-shake');return}
+    const s=screen(),t=now(),n={id:uid('n'),screen:s.key,label:s.label,kind:s.kind,route:ME()?route:null,ref:s.ref||null,role:who(),author:C.author.trim(),text,pin:draft.screen===s.key?draft.pin:null,done:false,createdAt:t,updatedAt:t};
+    D.notes.push(n);ta.value='';draft={pin:null,screen:null};tab='here';view='list';
+    commit(`note ajoutée · ${s.label}`);flash(n.id);ta.focus();
+  }
+  function saveEdit(id){
+    const ta=$(`#nt-body .nt-edit[data-id="${id}"]`),v=ta?ta.value.trim():'';if(!v){ta&&ta.focus();return}
+    editing=null;const n=D.notes.find(x=>x.id===id);
+    if(n&&n.text!==v)change(id,x=>{x.text=v;x.editedAt=now()},'note modifiée');else renderBody();
+    flash(id);
+  }
+  function removeNote(id){
+    const i=D.notes.findIndex(x=>x.id===id);if(i<0)return;const prev=D.notes[i];
+    D.notes[i]={id,screen:prev.screen,deleted:true,updatedAt:now()};if(editing===id)editing=null;
+    commit('note supprimée');
+    ntToast('Note supprimée',()=>{const j=D.notes.findIndex(x=>x.id===id);if(j<0)return;D.notes[j]={...prev,updatedAt:now()};commit('note restaurée');flash(id)});
+  }
+
+  /* ---- GitHub sync ---- */
+  function schedule(ms=1200){clearTimeout(timer);timer=setTimeout(syncNow,ms)}
+  async function fetchRemote(){
+    let r;try{r=await fetch(`${API}/contents/${GH.path}?ref=${GH.branch}&t=${Date.now()}`,{headers:hdr(),cache:'no-store'})}catch(e){throw Object.assign(new Error('net'),{net:true})}
+    if(r.status===404)return{sha:null,notes:[]};
+    if(!r.ok){
+      if(!C.token){const f=await fetch('notes.json?t='+Date.now(),{cache:'no-store'}).catch(()=>null),d=f&&f.ok?await f.json().catch(()=>null):null;if(d&&Array.isArray(d.notes))return{sha:null,notes:d.notes,ro:true}}
+      throw Object.assign(new Error('http'),{status:r.status});
+    }
+    const j=await r.json();let txt=j.content?b64dec(j.content):'';
+    if(!txt&&j.download_url)txt=await (await fetch(j.download_url,{cache:'no-store'})).text();
+    let d;try{d=JSON.parse(txt||'{}')}catch(e){throw Object.assign(new Error('parse'),{parse:true})}
+    return{sha:j.sha,notes:Array.isArray(d.notes)?d.notes:[]};
+  }
+  async function putRemote(notes,sha){
+    const body={message:`Notes de revue : ${lastAction||'mise à jour'}`,content:b64enc(JSON.stringify({app:'AssurPay · notes de revue',updatedAt:now(),notes:[...notes].sort((a,b)=>byDate(a,b)||a.id.localeCompare(b.id))},null,2)+'\n'),branch:GH.branch};
+    if(sha)body.sha=sha;
+    let r;try{r=await fetch(`${API}/contents/${GH.path}`,{method:'PUT',headers:Object.assign(hdr(),{'Content-Type':'application/json'}),body:JSON.stringify(body)})}catch(e){throw Object.assign(new Error('net'),{net:true})}
+    if(!r.ok)throw Object.assign(new Error('http'),{status:r.status});
+    return(await r.json()).content.sha;
+  }
+  async function syncNow(){
+    clearTimeout(timer);if(busy){again=true;return}lastTry=Date.now();
+    if(!navigator.onLine){sync={state:'off'};renderFoot();return}
+    busy=true;sync={state:'sync'};renderFoot();
+    try{
+      for(let a=0;;a++){
+        const rem=await fetchRemote(),merged=merge(D.notes,rem.notes);let base=rem.notes,sha=rem.sha;
+        if(C.token&&!rem.ro&&sig(merged)!==sig(rem.notes)){try{sha=await putRemote(merged,rem.sha);base=merged}catch(e){if((e.status===409||e.status===422)&&a<3)continue;throw e}}
+        D.notes=merge(D.notes,merged);D.base=Object.fromEntries(base.map(n=>[n.id,n.updatedAt]));D.sha=sha;D.lastSync=now();lastAction='';saveD();break;
+      }
+      sync={state:'idle'};
+    }catch(e){sync={state:e.net?'off':'err',msg:errMsg(e)}}
+    finally{busy=false;renderPanel();updateTab();req();if(again||(C.token&&sync.state==='idle'&&pending())){again=false;schedule(400)}}
+  }
+  function errMsg(e){if(e.net)return'Réseau indisponible';if(e.parse)return'notes.json illisible sur GitHub';if(e.status===401)return'Jeton GitHub refusé ou expiré';if(e.status===403||e.status===429)return C.token?"Jeton sans droit d'écriture (Contents)":'Limite GitHub atteinte, nouvel essai bientôt';if(e.status===404)return'Dépôt introuvable pour ce jeton';return`GitHub indisponible (${e.status||'?'})`}
+  function statusInfo(){
+    const p=pending();
+    if(sync.state==='sync')return['sync',p&&C.token?'Enregistrement sur GitHub…':'Synchronisation…'];
+    if(sync.state==='err')return['err',sync.msg+' · Réessayer'];
+    if(sync.state==='off'||!navigator.onLine)return['local',p?`Hors ligne · ${plural(p,'modification')} gardée${p>1?'s':''} ici, envoi au retour du réseau`:'Hors ligne · notes gardées sur cet appareil'];
+    if(!C.token)return p?['local',`${plural(p,'modification')} sur cet appareil seulement · Activer GitHub`]:['ok',D.lastSync?'À jour avec GitHub · lecture seule':'Enregistré sur cet appareil'];
+    if(p)return['sync','Enregistré ici · envoi vers GitHub…'];
+    return['ok',`Enregistré sur GitHub${D.lastSync?' · '+ago(D.lastSync):''}`];
+  }
+  async function connect(){
+    const inp=$('#nt-token'),tok=inp.value.trim(),btn=$('#nt-connect button');if(!tok){inp.focus();return}
+    showErr('nt-cerr','');btn.disabled=true;btn.textContent='Vérification…';
+    try{
+      const r=await fetch(API,{headers:hdr(tok),cache:'no-store'});
+      if(r.status===401)throw new Error("Jeton refusé par GitHub : vérifiez qu'il est complet et non expiré.");
+      if(r.status===403||r.status===404)throw new Error(`Ce jeton n'a pas accès au dépôt ${GH.owner}/${GH.repo}.`);
+      if(!r.ok)throw new Error(`GitHub ne répond pas (${r.status}). Réessayez.`);
+      let login='';try{const u=await fetch('https://api.github.com/user',{headers:hdr(tok),cache:'no-store'});if(u.ok)login=(await u.json()).login||''}catch(e){}
+      C.token=tok;C.login=login;if(!C.author&&login){C.author=login;$('#nt-author').value=login}saveC();view='list';renderPanel();
+      ntToast('GitHub activé : les notes de cet appareil sont enregistrées dans le dépôt.');syncNow();
+    }catch(e){showErr('nt-cerr',e instanceof TypeError?'Réseau indisponible.':e.message);btn.disabled=false;btn.textContent='Activer'}
+  }
+
+  /* ---- panel ---- */
+  const isOpen=()=>!!$('#nt-panel')?.classList.contains('open');
+  function open(noFocus){const p=$('#nt-panel');p.classList.add('open');p.setAttribute('aria-hidden','false');C.open=true;saveC();hideCoach();renderPanel();updateTab();if(!noFocus&&view==='list'&&tab==='here'&&matchMedia('(pointer:fine)').matches)setTimeout(()=>$('#nt-text').focus({preventScroll:true}),60)}
+  function close(temp){const p=$('#nt-panel');p.classList.remove('open');p.setAttribute('aria-hidden','true');editing=null;setHot(null);if(!temp){C.open=false;saveC()}updateTab();if(!temp)$('#nt-tab').focus({preventScroll:true})}
+  function updateTab(){const t=$('#nt-tab');if(!t)return;const n=ofScreen(cur).filter(x=>!x.done).length,b=$('#nt-count');b.hidden=!n;b.textContent=n;t.setAttribute('aria-label',`Notes de revue${n?` · ${n} à faire sur cet écran`:''}`);t.classList.toggle('hide',isOpen()||!!placing)}
+  function flash(id){requestAnimationFrame(()=>{const el=$(`#nt-body [data-nid="${id}"]`);if(!el)return;el.scrollIntoView({block:'nearest',behavior:'smooth'});el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash')})}
+  function renderPanel(){
+    if(!$('#nt-panel'))return;const s=checkScreen()[0];
+    $('#nt-where').innerHTML=`<span class="pill nt-scr">${ic('pin')}${esc(s.kind)} · <b>${esc(s.label)}</b></span>${ME()?`<span class="faint">vue ${who().toLowerCase()}</span>`:''}`;
+    const here=ofScreen(s.key).filter(n=>!n.done).length,all=live().filter(n=>!n.done).length;
+    $('#nt-tabs').innerHTML=[['here','Cet écran',here],['all','Tous les écrans',all]].map(([k,l,c])=>`<button role="tab" type="button" data-n="tab" data-id="${k}" aria-selected="${view==='list'&&tab===k}">${l}${c?` · ${c}`:''}</button>`).join('');
+    $('#nt-compose').hidden=view!=='list'||tab!=='here';
+    $('#nt-text').placeholder=`Ce qu'il faut changer sur « ${s.label} »…`;
+    $('#nt-pinrow').innerHTML=draft.pin&&draft.screen===s.key?`<span class="nt-chip">${ic('pin',13)}<span>Épinglée sur « ${esc(draft.pin.label)} »</span><button type="button" data-n="draft-unpin" aria-label="Retirer l'épingle">${ic('x',12)}</button></span>`:`<button type="button" class="btn sm" data-n="place">${ic('pin',14)}Épingler sur l'écran</button><span>facultatif · montre l'endroit exact</span>`;
+    renderBody();renderFoot();
+  }
+  function renderBody(){
+    const b=$('#nt-body'),ed=b.querySelector('.nt-edit,#nt-token'),keep=ed&&{sel:ed.id?'#'+ed.id:`.nt-edit[data-id="${ed.dataset.id}"]`,v:ed.value,f:document.activeElement===ed,s:ed.selectionStart,e:ed.selectionEnd},st=b.scrollTop;
+    b.innerHTML=view==='settings'?settingsHtml():tab==='here'?hereHtml():allHtml();
+    b.scrollTop=st;
+    if(keep){const n=b.querySelector(keep.sel);if(n){n.value=keep.v;if(keep.f){n.focus();try{n.setSelectionRange(keep.s,keep.e)}catch(e){}}}}
+    if(hot){const h=hot;hot=null;setHot(h)}
+  }
+  function renderFoot(){const f=$('#nt-foot');if(!f)return;const [st,msg]=statusInfo();f.innerHTML=`<button type="button" class="nt-status" data-n="${st==='err'?'retry':'settings'}" title="${st==='err'?'Réessayer':"Où sont gardées les notes"}"><span class="nt-dot ${st}"></span><span>${esc(msg)}</span></button><button type="button" class="icon-btn" data-n="export" title="Exporter les notes (.md)" aria-label="Exporter les notes">${ic('download',16)}</button><button type="button" class="icon-btn" data-n="settings" title="Réglages" aria-label="Réglages" aria-pressed="${view==='settings'}">${ic('sliders',16)}</button>`}
+  function card(n,num,away){
+    const m=n.pin&&!away;
+    return `<article class="nt-note${n.done?' done':''}${m?' pinned':''}" data-nid="${n.id}">
+      <button type="button" class="nt-num" data-n="${away?'go':m?'locate':''}" data-id="${n.id}" ${away?`title="Ouvrir l'écran"`:m?`title="Montrer l'élément sur l'écran"`:'title="Note sans épingle" tabindex="-1"'}>${n.done?ic('check'):num}</button>
+      <div>${editing===n.id?`<textarea class="nt-edit" data-id="${n.id}" rows="3" aria-label="Modifier la note">${esc(n.text)}</textarea><div class="nt-acts" style="margin-left:0;gap:6px"><button type="button" class="btn sm nt-go" data-n="save" data-id="${n.id}">Enregistrer</button><button type="button" class="btn sm ghost" data-n="cancel">Annuler</button></div>`
+      :`<div class="nt-text">${esc(n.text)}</div>
+      <div class="nt-meta">${n.author?`<b>${esc(n.author)}</b>`:''}<span>${ago(n.createdAt)}${n.editedAt?' · modifiée':''}</span>${n.role?`<span>vue ${esc(n.role.toLowerCase())}</span>`:''}${n.pin?`<span>${ic('pin')}${esc(n.pin.label)}</span>`:''}</div>
+      <div class="nt-acts"><button type="button" class="nt-act${n.done?'':' ok'}" data-n="done" data-id="${n.id}">${ic(n.done?'clock':'check')}${n.done?'Rouvrir':'Fait'}</button><button type="button" class="nt-act" data-n="edit" data-id="${n.id}">${ic('edit')}Modifier</button>${away?'':`<button type="button" class="nt-act" data-n="${n.pin?'unpin':'repin'}" data-id="${n.id}">${ic('pin')}${n.pin?'Désépingler':'Épingler'}</button>`}<button type="button" class="nt-act del" data-n="del" data-id="${n.id}" title="Supprimer" aria-label="Supprimer la note">${ic('trash')}</button></div>`}</div></article>`;
+  }
+  function hereHtml(){
+    const l=ofScreen(cur);
+    if(!l.length)return `<div class="nt-empty"><span class="nt-logo">${ic('note',22)}</span><b>Aucune note sur cet écran</b><span>Écrivez ci-dessus ce qu'il faut changer. Pour viser un endroit précis, utilisez « Épingler sur l'écran ».</span></div>`;
+    const op=l.filter(n=>!n.done),dn=l.filter(n=>n.done);
+    return (op.length?op.map(n=>card(n,l.indexOf(n)+1)).join(''):`<p class="nt-alldone">${ic('check')}Tout est traité sur cet écran.</p>`)+(dn.length?`<div class="nt-sep">Faites · ${dn.length}</div>`+dn.map(n=>card(n,l.indexOf(n)+1)).join(''):'');
+  }
+  function allHtml(){
+    const l=live();
+    if(!l.length)return `<div class="nt-empty"><span class="nt-logo">${ic('note',22)}</span><b>Aucune note pour l'instant</b><span>Ouvrez un écran et notez ce qu'il faut changer : tout est regroupé ici, écran par écran.</span></div>`;
+    const g=new Map();l.forEach(n=>{if(!g.has(n.screen))g.set(n.screen,[]);g.get(n.screen).push(n)});
+    const groups=[...g.entries()].map(([k,ns])=>{ns.sort(byDate);return{k,ns,open:ns.filter(n=>!n.done).length,last:ns.reduce((m,n)=>(n.updatedAt||'')>m?n.updatedAt:m,'')}})
+      .sort((a,b)=>(b.k===cur)-(a.k===cur)||(!!b.open)-(!!a.open)||b.last.localeCompare(a.last));
+    const op=l.filter(n=>!n.done).length,pct=Math.round((l.length-op)/l.length*100);
+    return `<div class="nt-sum"><div><b>${op}</b><span>à faire</span></div><div><b>${l.length-op}</b><span>faite${l.length-op>1?'s':''}</span></div><div><b>${groups.length}</b><span>écran${groups.length>1?'s':''}</span></div></div><div class="bar" title="${pct} % traité"><i style="width:${pct}%"></i></div>`
+      +groups.map(({k,ns,open})=>{const r=ns[ns.length-1],away=k!==cur;return `<section class="nt-group"><div class="nt-ghead"><div><b>${esc(r.label)}</b><small>${esc(r.kind||'')} · ${open?`${open} à faire`:'tout est fait'}</small></div>${away?`<button type="button" class="btn sm" data-n="go" data-id="${r.id}">Ouvrir ${ic('arrow',14)}</button>`:'<span class="pill nt-scr">Écran actuel</span>'}</div>${ns.map((n,i)=>card(n,i+1,away)).join('')}</section>`}).join('');
+  }
+  function settingsHtml(){
+    const repo=`${GH.owner}/${GH.repo}`,file=`https://github.com/${repo}/blob/${GH.branch}/${GH.path}`,hist=`https://github.com/${repo}/commits/${GH.branch}/${GH.path}`;
+    return `<div class="nt-set">
+      <button type="button" class="btn sm ghost" data-n="back" style="align-self:flex-start">← Retour aux notes</button>
+      <h3>Où sont gardées les notes</h3>
+      <p>Chaque note est enregistrée à l'instant dans ce navigateur, puis écrite dans le fichier <code>${GH.path}</code> du dépôt <b>${esc(repo)}</b>. Vous les retrouvez ainsi sur tous vos appareils, et chaque changement reste dans l'historique.</p>
+      ${C.token?`<div class="nt-conn">${ic('check',16)}<span>Écriture sur GitHub activée${C.login?` · ${esc(C.login)}`:''}</span></div><div class="nt-row"><button type="button" class="btn sm" data-n="retry">Synchroniser maintenant</button><button type="button" class="btn sm danger" data-n="disconnect">Désactiver sur cet appareil</button></div>`
+      :`<p><b>Cet appareil lit les notes du dépôt mais ne peut pas encore y écrire.</b> Pour activer l'enregistrement sur GitHub (une seule fois par appareil) :</p>
+      <ol><li>Créez un jeton sur <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub › Fine-grained token</a>.</li><li><i>Repository access</i> : seulement <b>${esc(repo)}</b>. <i>Permissions</i> : <b>Contents · Read and write</b>.</li><li>Collez-le ci-dessous. Il reste dans ce navigateur et n'est jamais publié.</li></ol>
+      <form class="nt-row" id="nt-connect"><input id="nt-token" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_…" aria-label="Jeton GitHub"><button class="btn nt-go" type="submit">Activer</button></form><div class="err" id="nt-cerr" hidden></div>`}
+      <h3>Affichage</h3>
+      <label class="perm" for="nt-pins-sw"><div><b>Repères sur l'écran</b><small>Les pastilles numérotées posées sur les éléments. Désactivez-les pendant une présentation.</small></div><input type="checkbox" class="sw" id="nt-pins-sw" ${C.pins?'checked':''}></label>
+      <p class="faint" style="font-size:12.5px">Raccourci : touche <b>N</b> pour ouvrir ou fermer les notes.</p>
+      <h3>Sauvegarde</h3>
+      <div class="nt-row"><button type="button" class="btn sm" data-n="export">${ic('download')}Exporter (.md)</button><a class="btn sm ghost" href="${file}" target="_blank" rel="noopener">Voir notes.json</a><a class="btn sm ghost" href="${hist}" target="_blank" rel="noopener">Historique</a></div>
+    </div>`;
+  }
+
+  /* ---- navigation from a note ---- */
+  function goTo(id){
+    const n=D.notes.find(x=>x.id===id);if(!n)return;const k=n.screen;
+    if(k==='login'){ntToast("Cette note concerne l'écran de connexion : déconnectez-vous pour le voir.");return}
+    if(!ME()){ntToast('Connectez-vous pour ouvrir cet écran.');return}
+    const r=n.route;
+    if(r&&ROUTES[r]){if(!ROUTES[r].ok()){ntToast(`Cet écran se voit en vue ${(n.role||'autre compte').toLowerCase()} : connectez-vous avec ce compte.`);return}closeModal();if(route!==r||DR)ACT.nav(r)}
+    if(k.startsWith('drawer:')){const t=k.slice(7),ok=n.ref&&(t==='contract'?K(n.ref):S.clients.find(c=>c.id===n.ref));if(ok)openDrawer(t,n.ref);else{ntToast(`Ouvrez une ${t==='contract'?'fiche assurance':'fiche client'} pour voir cette note à sa place.`);return}}
+    else if(k.startsWith('modal:')){ntToast(`Ouvrez la fenêtre « ${n.label} » pour voir cette note à sa place.`);return}
+    tab='here';view='list';
+    setTimeout(()=>{layout();renderPanel();flash(id);if(n.pin&&!n.done)locate(id)},80);
+  }
+
+  /* ---- misc ---- */
+  function ntToast(msg,undo){const t=document.createElement('div');t.className='toast nt-toast';t.innerHTML=`${ic('note')}<span>${esc(msg)}</span>`;if(undo){const b=document.createElement('button');b.type='button';b.textContent='Annuler';b.onclick=()=>{undo();t.remove()};t.appendChild(b)}$('#toasts').appendChild(t);setTimeout(()=>t.remove(),undo?7000:4200)}
+  function exportMd(){
+    const l=live();if(!l.length){ntToast('Aucune note à exporter.');return}
+    const d=now(),g=new Map();l.forEach(n=>{if(!g.has(n.screen))g.set(n.screen,[]);g.get(n.screen).push(n)});
+    let md=`# Notes de revue · AssurPay\n\nExporté le ${fdate(d)} à ${ftime(d)} · ${plural(l.length,'note')}, ${l.filter(n=>!n.done).length} à faire.\n`;
+    g.forEach(ns=>{ns.sort(byDate);const r=ns[ns.length-1];md+=`\n## ${r.label}${r.kind?` (${r.kind.toLowerCase()})`:''}\n\n`;ns.forEach((n,i)=>{md+=`- [${n.done?'x':' '}] **${i+1}.** ${n.text.replace(/\n/g,'\n  ')}\n  _${[n.author,fdate(n.createdAt),n.role&&'vue '+n.role.toLowerCase(),n.pin&&`épinglée sur « ${n.pin.label} »`].filter(Boolean).join(' · ')}_\n`})});
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([md],{type:'text/markdown;charset=utf-8'}));a.download=`notes-assurpay-${todayKey()}.md`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);
+  }
+  function coach(){if(C.coach)return;setTimeout(()=>{if(C.coach||isOpen()||placing||$('#nt-coach'))return;const c=document.createElement('div');c.className='nt-coach';c.id='nt-coach';c.setAttribute('role','dialog');c.innerHTML=`<span class="eyebrow">Nouveau</span><b>Vos retours, sur chaque écran</b><span class="muted">Notez ce qu'il faut changer, ou épinglez la note sur un élément précis. Tout est enregistré automatiquement et vous suit sur tous vos appareils.</span><div class="nt-row"><button type="button" class="btn sm nt-go" data-n="coach-go">Essayer</button><button type="button" class="btn sm ghost" data-n="coach-x">Plus tard</button></div>`;$('.nt-ui').appendChild(c)},1400)}
+  function hideCoach(){$('#nt-coach')?.remove();if(!C.coach){C.coach=true;saveC()}}
+
+  /* ---- mount & events ---- */
+  function mount(){
+    const w=document.createElement('div');w.className='nt-ui';
+    w.innerHTML=`<div class="nt-pins" id="nt-pins"></div><div class="nt-hl" id="nt-hl" hidden></div>
+    <button class="nt-tab" id="nt-tab" type="button" data-n="toggle" aria-controls="nt-panel" title="Notes de revue (touche N)">${ic('note',17)}<span class="lbl">Notes</span><b id="nt-count" hidden></b></button>
+    <aside class="nt-panel" id="nt-panel" aria-label="Notes de revue" aria-hidden="true">
+      <header class="nt-head"><div class="nt-title"><span class="nt-logo">${ic('note',16)}</span><h2>Notes de revue</h2><button type="button" class="icon-btn" data-n="close" aria-label="Fermer les notes">${ic('x')}</button></div><div class="nt-where" id="nt-where"></div><div class="tabs" role="tablist" id="nt-tabs"></div></header>
+      <form class="nt-compose" id="nt-compose" novalidate><textarea id="nt-text" rows="3" aria-label="Nouvelle note"></textarea><div class="nt-pinrow" id="nt-pinrow"></div><div class="nt-crow"><input id="nt-author" placeholder="Votre nom" autocomplete="name" aria-label="Votre nom"><span class="nt-kbd">Ctrl ↵</span><button class="btn nt-go" type="submit">${ic('plus')}Ajouter</button></div></form>
+      <div class="nt-body" id="nt-body"></div>
+      <footer class="nt-foot" id="nt-foot"></footer>
+    </aside>
+    <div class="nt-banner" id="nt-banner" role="status" hidden>${ic('pin',16)}<span>Cliquez sur l'élément à annoter</span><button type="button" class="btn sm" data-n="cancel-place">Annuler <kbd>Échap</kbd></button></div>`;
+    document.body.appendChild(w);
+    w.addEventListener('click',e=>{
+      const t=e.target.closest('[data-n]');if(!t||!t.dataset.n)return;const id=t.dataset.id;
+      switch(t.dataset.n){
+        case 'toggle':isOpen()?close():open();break;
+        case 'close':close();break;
+        case 'tab':tab=id;view='list';renderPanel();$('#nt-body').scrollTop=0;break;
+        case 'place':startPlace();break;
+        case 'cancel-place':stopPlace();open(true);break;
+        case 'draft-unpin':draft={pin:null,screen:null};renderPanel();req();break;
+        case 'pin':if(id==='draft'){open();break}tab='here';view='list';open(true);flash(id);break;
+        case 'locate':locate(id);break;
+        case 'go':goTo(id);break;
+        case 'done':{const n=D.notes.find(x=>x.id===id);if(n){change(id,x=>{x.done=!x.done},n.done?'note rouverte':'note faite');flash(id)}break}
+        case 'edit':editing=id;renderBody();{const ta=$(`#nt-body .nt-edit[data-id="${id}"]`);if(ta){ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length)}}break;
+        case 'save':saveEdit(id);break;
+        case 'cancel':editing=null;renderBody();break;
+        case 'repin':startPlace(id);break;
+        case 'unpin':change(id,n=>{n.pin=null},'épingle retirée');break;
+        case 'del':removeNote(id);break;
+        case 'settings':view=view==='settings'?'list':'settings';if(!isOpen())open(true);renderPanel();$('#nt-body').scrollTop=0;break;
+        case 'back':view='list';renderPanel();break;
+        case 'retry':syncNow();break;
+        case 'disconnect':C.token='';C.login='';saveC();renderPanel();ntToast("Cet appareil n'écrit plus sur GitHub. Les notes restent ici.");break;
+        case 'export':exportMd();break;
+        case 'coach-go':hideCoach();open();break;
+        case 'coach-x':hideCoach();break;
+      }
+    });
+    w.addEventListener('submit',e=>{e.preventDefault();if(e.target.id==='nt-compose')addNote();else if(e.target.id==='nt-connect')connect()});
+    w.addEventListener('input',e=>{if(e.target.id==='nt-author'){C.author=e.target.value;saveC()}});
+    w.addEventListener('change',e=>{if(e.target.id==='nt-pins-sw'){C.pins=e.target.checked;saveC();req()}});
+    w.addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){if(e.target.id==='nt-text'){e.preventDefault();addNote()}else if(e.target.classList.contains('nt-edit')){e.preventDefault();saveEdit(e.target.dataset.id)}}});
+    w.addEventListener('mouseover',e=>{const t=e.target.closest('.nt-note[data-nid],.nt-pin[data-id]');setHot(t?(t.dataset.nid||t.dataset.id):null)});
+    w.addEventListener('mouseout',e=>{if(!e.relatedTarget||!w.contains(e.relatedTarget))setHot(null)});
+  }
+  function init(){
+    mount();$('#nt-author').value=C.author;
+    layout();renderPanel();if(C.open)open(true);coach();
+    const mo=new MutationObserver(req);['app','drawer-root','modal-root'].forEach(id=>mo.observe(document.getElementById(id),{childList:true,subtree:true,attributes:true,attributeFilter:['class','hidden']}));
+    addEventListener('scroll',()=>{req();if(!placing&&!$('#nt-hl').classList.contains('flash'))hl(null)},{capture:true,passive:true});
+    addEventListener('resize',req);document.addEventListener('transitionend',req);if(document.fonts)document.fonts.ready.then(req);
+    addEventListener('mousemove',onPickMove,true);addEventListener('mousedown',onPickDown,true);addEventListener('click',onPickClick,true);
+    addEventListener('keydown',e=>{
+      if(placing&&e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();stopPlace();open(true);return}
+      const inUi=e.target.closest&&e.target.closest('.nt-ui');
+      if(e.key==='Escape'&&(inUi||$('#nt-coach'))){e.stopImmediatePropagation();if(editing){editing=null;renderBody()}else if($('#nt-coach'))hideCoach();else close();return}
+      if((e.key==='n'||e.key==='N')&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)&&!e.target.isContentEditable){e.preventDefault();isOpen()?close():open()}
+    },true);
+    addEventListener('storage',e=>{if(e.key!==LSK||!e.newValue)return;try{Object.assign(D,JSON.parse(e.newValue));renderPanel();updateTab();req()}catch(x){}});
+    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&Date.now()-lastTry>15e3)syncNow()});
+    addEventListener('online',()=>syncNow());addEventListener('offline',renderFoot);
+    setInterval(()=>{if(document.visibilityState==='visible'&&Date.now()-lastTry>=(C.token?60e3:180e3))syncNow();else if(isOpen())renderFoot()},30e3);
+    syncNow();
+  }
+  return{init};
+})();
+
 load();
 if(sess.get()&&!ME())sess.set(null);
 if(ME())route=isAdmin()?'dashboard':'portal';
 render();
+NT.init();
 })();
 </script>
 
