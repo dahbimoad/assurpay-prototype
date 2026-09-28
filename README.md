@@ -23,6 +23,15 @@ Every screen has a yellow **Notes** tab on the right edge (shortcut: **N**) for 
 - Anyone can read them. To write them to the repo from a device, open the panel settings once and paste a GitHub fine-grained token limited to this repository with **Contents: Read and write**.
 - Resetting the demo does not touch the notes.
 
+## DOM inspector (for building the capture extension)
+
+To build the extension that reads the insurer portal at validation time, we first need an accurate map of that page's fields, buttons and tables.
+
+- **Copy-paste page:** https://dahbimoad.github.io/assurpay-prototype/tools/dom-inspector.html
+- **Raw script:** [`tools/dom-inspector.js`](tools/dom-inspector.js)
+
+Open the portal page, open the console (`F12` → Console), paste the script, press Enter. It prints a structured report and copies it to your clipboard — paste that back so the extension is built against the real page. The script only reads the page: it sends nothing and changes nothing, and it never includes password fields.
+
 ## Running locally
 
 It is a single static file: open `index.html` in a browser, or serve the folder (for example `python3 -m http.server`).

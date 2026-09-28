@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AssurPay · Inspecteur DOM</title>
+<style>
+  :root{color-scheme:light dark}
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;background:#F2F4F1;color:#16201D;padding:24px}
+  @media(prefers-color-scheme:dark){body{background:#0E1412;color:#E5ECE9}pre{background:#151D1A!important;border-color:#27332F!important}.step{background:#151D1A!important;border-color:#27332F!important}code{background:#1A2421!important}}
+  main{max-width:820px;margin:0 auto}
+  h1{font-size:24px;margin:0 0 4px}
+  .sub{color:#5A6863;margin:0 0 22px}
+  ol{padding-left:20px}
+  li{margin:6px 0}
+  .step{background:#fff;border:1px solid #DCE2DB;border-radius:12px;padding:16px 18px;margin:0 0 18px}
+  code{background:#F6F8F5;padding:2px 6px;border-radius:5px;font:13px ui-monospace,Consolas,monospace}
+  button{font:600 14px system-ui;background:#0D6657;color:#fff;border:0;border-radius:9px;padding:10px 16px;cursor:pointer}
+  button:hover{filter:brightness(1.08)}
+  button.ok{background:#1D7443}
+  pre{background:#fff;border:1px solid #DCE2DB;border-radius:12px;padding:14px;overflow:auto;font:12.5px/1.5 ui-monospace,Consolas,monospace;max-height:340px}
+  .note{font-size:13px;color:#5A6863;border-left:3px solid #0D6657;padding:4px 0 4px 12px;margin:16px 0}
+  a{color:#0D6657}
+</style>
+</head>
+<body>
+<main>
+  <h1>Inspecteur DOM · AssurPay</h1>
+  <p class="sub">Lit la page du portail de l'assureur et copie une carte de ses champs, boutons et tableaux, pour construire l'extension de capture.</p>
+
+  <div class="step">
+    <b>Mode d'emploi</b>
+    <ol>
+      <li>Ouvrez la page du portail de l'assureur (le formulaire de nouvelle attestation).</li>
+      <li>Ouvrez la console du navigateur : <code>F12</code> puis onglet <b>Console</b>.</li>
+      <li>Cliquez sur <b>Copier le script</b> ci-dessous, collez-le dans la console, puis <code>Entrée</code>.</li>
+      <li>Le rapport est affiché <b>et copié dans le presse-papiers</b>. Collez-le à Claude.</li>
+    </ol>
+    <button id="copy">Copier le script</button>
+  </div>
+
+  <p class="note">Le script ne fait que <b>lire</b> la page : il n'envoie rien et ne modifie rien. Les champs mot de passe ne sont jamais inclus, et le texte des autres champs n'apparaît qu'en court extrait — relisez le rapport avant de le partager si la page contient des données sensibles.</p>
+
+  <pre id="src">/* AssurPay · DOM inspector
+ *
+ * Purpose: read the page you have open (the insurer portal's "new attestation"
+ * form) and print a clean map of its fields, buttons and tables, so the capture
+ * extension can be built against the real page structure.
+ *
+ * How to use:
+ *   1. Open the insurer portal page you want the extension to read.
+ *   2. Open the browser console (F12 → Console).
+ *   3. Paste this whole file and press Enter.
+ *   4. A report is printed AND copied to your clipboard. Paste it back to Claude.
+ *
+ * It only reads the DOM. It does not send anything anywhere and it changes
+ * nothing on the page. Values of password fields are never included, and the
+ * text you typed into other fields is shown only as a short, truncated sample
+ * so selectors can be matched — review it before sharing if the page holds
+ * anything sensitive.
+ */
+(() =&gt; {
+  'use strict';
+  const MAX = 60;
+  const clip = s =&gt; (s == null ? '' : String(s)).replace(/\s+/g, ' ').trim();
+  const cut = s =&gt; { s = clip(s); return s.length &gt; MAX ? s.slice(0, MAX - 1) + '…' : s; };
+  const vis = el =&gt; {
+    const r = el.getBoundingClientRect();
+    if (!r.width &amp;&amp; !r.height) return false;
+    const cs = getComputedStyle(el);
+    return cs.display !== 'none' &amp;&amp; cs.visibility !== 'hidden' &amp;&amp; cs.opacity !== '0';
+  };
+
+  // Build a reasonably stable CSS selector for one element.
+  const selector = el =&gt; {
+    if (el.id &amp;&amp; document.querySelectorAll('#' + CSS.escape(el.id)).length === 1)
+      return '#' + CSS.escape(el.id);
+    const nameAttr = el.getAttribute &amp;&amp; el.getAttribute('name');
+    if (nameAttr) {
+      const s = `${el.tagName.toLowerCase()}[name="${CSS.escape(nameAttr)}"]`;
+      if (document.querySelectorAll(s).length === 1) return s;
+    }
+    const parts = [];
+    let node = el;
+    while (node &amp;&amp; node.nodeType === 1 &amp;&amp; parts.length &lt; 5) {
+      if (node.id) { parts.unshift('#' + CSS.escape(node.id)); break; }
+      let part = node.tagName.toLowerCase();
+      const cls = (node.getAttribute('class') || '').trim().split(/\s+/)
+        .filter(c =&gt; c &amp;&amp; !/^(ng-|is-|has-|active|focus|hover)/.test(c)).slice(0, 2);
+      if (cls.length) part += '.' + cls.map(c =&gt; CSS.escape(c)).join('.');
+      const parent = node.parentElement;
+      if (parent) {
+        const same = [...parent.children].filter(c =&gt; c.tagName === node.tagName);
+        if (same.length &gt; 1) part += `:nth-of-type(${same.indexOf(node) + 1})`;
+      }
+      parts.unshift(part);
+      node = node.parentElement;
+    }
+    return parts.join(' &gt; ');
+  };
+
+  const labelFor = el =&gt; {
+    if (el.labels &amp;&amp; el.labels[0]) return clip(el.labels[0].innerText);
+    if (el.getAttribute('aria-label')) return clip(el.getAttribute('aria-label'));
+    const wrap = el.closest('label');
+    if (wrap) return clip(wrap.innerText);
+    const id = el.id &amp;&amp; document.querySelector(`label[for="${CSS.escape(el.id)}"]`);
+    if (id) return clip(id.innerText);
+    return '';
+  };
+
+  const describeField = el =&gt; {
+    const tag = el.tagName.toLowerCase();
+    const type = tag === 'input' ? (el.type || 'text') : tag;
+    const out = {
+      label: labelFor(el),
+      tag, type,
+      name: el.getAttribute('name') || '',
+      id: el.id || '',
+      placeholder: el.getAttribute('placeholder') || '',
+      selector: selector(el),
+      required: !!el.required,
+    };
+    if (type === 'password') out.sample = '(hidden)';
+    else if (tag === 'select') {
+      out.options = [...el.options].slice(0, 12).map(o =&gt; cut(o.textContent));
+      out.sample = cut(el.value);
+    } else if (type === 'checkbox' || type === 'radio') {
+      out.checked = el.checked;
+      out.value = cut(el.value);
+    } else {
+      out.sample = cut(el.value);
+    }
+    return out;
+  };
+
+  const fields = [...document.querySelectorAll('input, select, textarea')]
+    .filter(vis).map(describeField);
+
+  const buttons = [...document.querySelectorAll('button, [role="button"], input[type="submit"], input[type="button"], a.btn')]
+    .filter(vis).map(el =&gt; ({
+      text: cut(el.innerText || el.value || el.getAttribute('aria-label')),
+      tag: el.tagName.toLowerCase(),
+      type: el.getAttribute('type') || '',
+      selector: selector(el),
+    })).filter(b =&gt; b.text);
+
+  const tables = [...document.querySelectorAll('table')].filter(vis).slice(0, 8).map(t =&gt; ({
+    selector: selector(t),
+    caption: cut(t.caption ? t.caption.innerText : ''),
+    headers: [...t.querySelectorAll('thead th, tr:first-child th')].map(th =&gt; cut(th.innerText)).filter(Boolean),
+    rowCount: t.querySelectorAll('tbody tr, tr').length,
+    firstRow: [...(t.querySelector('tbody tr') || t.querySelectorAll('tr')[1] || { children: [] }).children]
+      .map(td =&gt; cut(td.innerText)),
+  }));
+
+  const forms = [...document.querySelectorAll('form')].filter(vis).map(f =&gt; ({
+    selector: selector(f),
+    id: f.id || '',
+    action: f.getAttribute('action') || '',
+    method: (f.getAttribute('method') || 'get').toLowerCase(),
+    fieldCount: f.querySelectorAll('input, select, textarea').length,
+  }));
+
+  const report = {
+    app: 'AssurPay DOM inspector',
+    capturedAt: new Date().toISOString(),
+    page: { url: location.href, title: document.title, lang: document.documentElement.lang || '' },
+    counts: { forms: forms.length, fields: fields.length, buttons: buttons.length, tables: tables.length },
+    forms, fields, buttons, tables,
+  };
+
+  const json = JSON.stringify(report, null, 2);
+  console.log('%cAssurPay DOM inspector', 'font:600 14px sans-serif;color:#0D6657');
+  console.log(`Found ${forms.length} form(s), ${fields.length} field(s), ${buttons.length} button(s), ${tables.length} table(s).`);
+  console.log(report);
+  console.log('--- copy the block below (also copied to your clipboard) ---\n' + json);
+
+  const done = () =&gt; console.log('%c✓ Report copied to clipboard — paste it back to Claude.', 'color:#1D7443;font-weight:600');
+  try {
+    navigator.clipboard.writeText(json).then(done, () =&gt; console.log('Clipboard blocked — copy the JSON block above manually.'));
+  } catch (e) {
+    console.log('Clipboard blocked — copy the JSON block above manually.');
+  }
+  return report;
+})();
+</pre>
+</main>
+<script>
+  const src=document.getElementById("src").textContent;
+  const btn=document.getElementById("copy");
+  btn.addEventListener("click",()=>{
+    navigator.clipboard.writeText(src).then(()=>{
+      btn.textContent="✓ Script copié";btn.classList.add("ok");
+      setTimeout(()=>{btn.textContent="Copier le script";btn.classList.remove("ok")},2200);
+    },()=>{
+      const r=document.createRange();r.selectNode(document.getElementById("src"));
+      getSelection().removeAllRanges();getSelection().addRange(r);
+      btn.textContent="Sélectionné — faites Ctrl+C";
+    });
+  });
+</script>
+</body>
+</html>
